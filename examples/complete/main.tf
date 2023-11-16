@@ -14,11 +14,21 @@ resource "ibm_is_vpc" "vpc" {
   name = "${var.prefix}-vpc"
 }
 
+resource "ibm_is_vpc_address_prefix" "prefix" {
+  name = "${var.prefix}-prefix"
+  zone = "${var.region}-1"
+  vpc  = ibm_is_vpc.vpc.id
+  cidr = "10.100.10.0/24"
+}
+
 resource "ibm_is_subnet" "subnet" {
+  depends_on = [
+    ibm_is_vpc_address_prefix.prefix
+  ]
   name            = "${var.prefix}-vpc"
   vpc             = ibm_is_vpc.vpc.id
   zone            = "${var.region}-1"
-  ipv4_cidr_block = "10.240.0.0/24"
+  ipv4_cidr_block = "10.100.10.0/24"
   tags            = var.resource_tags
 }
 
@@ -37,14 +47,6 @@ resource "ibm_is_instance" "vsi" {
   profile = "bx2-2x8"
 
   primary_network_interface {
-    subnet = ibm_is_subnet.subnet.id
-    primary_ip {
-      address = "10.240.0.6"
-    }
-  }
-
-  network_interfaces {
-    name   = "eth1"
     subnet = ibm_is_subnet.subnet.id
   }
 

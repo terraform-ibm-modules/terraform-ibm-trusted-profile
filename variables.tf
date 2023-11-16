@@ -76,46 +76,6 @@ variable "trusted_profile_claim_rules" {
   description = "A list of Trusted Profile Claim Rule objects that are applied to the Trusted Profile created by the module."
 
   default = null
-
-  # validation {
-  #   condition = contains(["Profile-SAML", "Profile-CR"], var.trusted_profile_claim_rules[*].type)
-  #   error_message = "Value for `var.trusted_profile_claim_rules[*].type must be either `Profile-SAML` or `Profile-CR`."
-  # }
-
-  # validation {
-  #   condition = contains(["EQUALS", "NOT_EQUALS", "EQUALS_IGNORE_CASE", "NOT_EQUALS_IGNORE_CASE", "CONTAINS", "IN"], var.trusted_profile_claim_rules[*].conditions[*].operator)
-  #   error_message = "Value for `var.trusted_profile_claim_rules[*].conditions[*].operator` must be one of the following: `EQUALS`, `NOT_EQUALS`, `EQUALS_IGNORE_CASE`, `NOT_EQUALS_IGNORE_CASE`, `CONTAINS`, `IN`."
-  # }
-
-  # validation {
-  #   condition = (
-  #     var.trusted_profile_claim_rules[*].cr_type == null ? true : var.trusted_profile_claim_rules[*].type == "Profile-CR"
-  #   )
-  #   error_message = "Value for `var.trusted_profile_claim_rules[*].cr_type` should only be provided when `var.trusted_profile_claim_rules[*].type` is `Profile-CR`."
-  # }
-
-  # validation {
-  #   condition = (
-  #     var.trusted_profile_claim_rules[*].cr_type == null ? true : (
-  #       contains(["VSI", "IKS_SA", "ROKS_SA"], var.trusted_profile_claim_rules[*].cr_type)
-  #     )
-  #   )
-  #   error_message = "Value for `var.trusted_profile_claim_rules[*].cr_type` must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`."
-  # }
-
-  # validation {
-  #   condition = (
-  #     var.trusted_profile_claim_rules[*].expiration == null ? true : var.trusted_profile_claim_rules[*].type == "Profile-SAML"
-  #   )
-  #   error_message = "Value for `var.trusted_profile_claim_rules[*].expiration` should only be provided when `var.trusted_profile_claim_rules[*].type` is `Profile-SAML`."
-  # }
-
-  # validation {
-  #   condition = (
-  #     var.trusted_profile_claim_rules[*].realm_name == null ? true : var.trusted_profile_claim_rules[*].type == "Profile-SAML"
-  #   )
-  #   error_message = "Value for `var.trusted_profile_claim_rules[*].realm_name` should only be provided when `var.trusted_profile_claim_rules[*].type` is `Profile-SAML`."
-  # }
 }
 
 variable "trusted_profile_links" {
@@ -135,25 +95,4 @@ variable "trusted_profile_links" {
   description = "A list of Trusted Profile Link objects that are applied to the Trusted Profile created by the module."
 
   default = null
-
-  # validation {
-  #   condition = (
-  #     contains(["VSI", "IKS_SA", "ROKS_SA"], var.trusted_profile_links[*].cr_type)
-  #   )
-  #   error_message = "Value for `var.trusted_profile_links[*].cr_type must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`."
-  # }
-
-  # validation {
-  #   condition = (
-  #     var.trusted_profile_links[*].link[*].namespace != null && var.trusted_profile_links[*].cr_type != "VSI"
-  #   )
-  #   error_message = "Value for `var.trusted_profile_links[*].link[*].namespace` should only be provided if `var.trusted_profile_links[*].cr_type` is `IKS_SA` or `ROKS_SA`."
-  # }
-
-  # validation {
-  #   condition = (
-  #     var.trusted_profile_links[*].link[*].name != null && var.trusted_profile_links[*].cr_type != "VSI"
-  #   )
-  #   error_message = "Value for `var.trusted_profile_links[*].link[*].name` should only be provided if `var.trusted_profile_links[*].cr_type` is `IKS_SA` or `ROKS_SA`."
-  # }
 }
