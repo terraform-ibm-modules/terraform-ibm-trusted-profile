@@ -1,11 +1,6 @@
 <!-- Update the title -->
 # Terraform IBM Trusted Profile
 
-<!--
-Update status and "latest release" badges:
-  1. For the status options, see https://github.ibm.com/GoldenEye/documentation/blob/master/status.md
-  2. Update the "latest release" badge to point to the correct module's repo. Replace "module-template" in two places.
--->
 [![Incubating (Not yet consumable)](https://img.shields.io/badge/status-Incubating%20(Not%20yet%20consumable)-red)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
 [![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-trusted-profile?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/releases/latest)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
@@ -39,13 +34,6 @@ https://terraform-ibm-modules.github.io/documentation/#/implementation-guideline
 ## terraform-ibm-trusted-profile
 
 ### Usage
-
-<!--
-Add an example of the use of the module in the following code block.
-
-Use real values instead of "var.<var_name>" or other placeholder values
-unless real values don't help users know what to change.
--->
 
 ```hcl
 module "trusted_profile {
@@ -91,15 +79,6 @@ The 3 variables `trusted_profile_policies`, `trusted_profile_claim_rules`, and `
 
 ### Required IAM access policies
 
-<!-- PERMISSIONS REQUIRED TO RUN MODULE
-If this module requires permissions, uncomment the following block and update
-the sample permissions, following the format.
-Replace the sample Account and IBM Cloud service names and roles with the
-information in the console at
-Manage > Access (IAM) > Access groups > Access policies.
--->
-
-
 You need the following permissions to run this module.
 
 - Account Management
@@ -107,14 +86,6 @@ You need the following permissions to run this module.
         - `Administrator` platform access
 
 You will also need `Administrator` access for any service which you are creating a policy for in the trusted profile. Lastly, your account must have authentication from an external identity provider enabled; see [this documentation](https://cloud.ibm.com/docs/account?topic=account-idp-integration) for more information.
-
-<!-- NO PERMISSIONS FOR MODULE
-If no permissions are required for the module, uncomment the following
-statement instead the previous block.
--->
-
-<!-- No permissions are needed to run this module.-->
-
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -158,7 +129,6 @@ No modules.
 | <a name="output_trusted_profile_policies"></a> [trusted\_profile\_policies](#output\_trusted\_profile\_policies) | Output of the Trusted Profile Policies |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-<!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
 ## Contributing
 
 You can report issues and request features for this module in GitHub issues in the module repo. See [Report an issue or request a feature](https://github.com/terraform-ibm-modules/.github/blob/main/.github/SUPPORT.md).
