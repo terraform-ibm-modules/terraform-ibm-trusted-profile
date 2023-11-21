@@ -81,6 +81,14 @@ module "trusted_profile {
 }
 ```
 
+#### Using the variables
+
+The 3 variables `trusted_profile_policies`, `trusted_profile_claim_rules`, and `trusted_profile_links` are lists of objects whose fields are mapped out to match the arguments for the provider, for more information on the variables visit the following provider documentation:
+
+* [trusted_profile_policies](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.53.0/docs/resources/iam_trusted_profile_policy)
+* [trusted_profile_claim_rules](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.53.0/docs/resources/iam_trusted_profile_claim_rule)
+* [trusted_profile_links](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.53.0/docs/resources/iam_trusted_profile_link)
+
 ### Required IAM access policies
 
 <!-- PERMISSIONS REQUIRED TO RUN MODULE
@@ -91,17 +99,14 @@ information in the console at
 Manage > Access (IAM) > Access groups > Access policies.
 -->
 
-<!--
+
 You need the following permissions to run this module.
 
 - Account Management
-    - **Sample Account Service** service
-        - `Editor` platform access
-        - `Manager` service access
-    - IAM Services
-        - **Sample Cloud Service** service
-            - `Administrator` platform access
--->
+    - **IAM Identity** service
+        - `Administrator` platform access
+
+You will also need `Administrator` access for any service which you are creating a policy for in the trusted profile. Lastly, your account must have authentication from an external identity provider enabled; see [this documentation](https://cloud.ibm.com/docs/account?topic=account-idp-integration) for more information.
 
 <!-- NO PERMISSIONS FOR MODULE
 If no permissions are required for the module, uncomment the following
