@@ -1,7 +1,7 @@
 <!-- Update the title -->
 # Terraform IBM Trusted Profile
 
-[![Incubating (Not yet consumable)](https://img.shields.io/badge/status-Incubating%20(Not%20yet%20consumable)-red)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
+[![Stable (With quality checks)](https://img.shields.io/badge/Status-Stable%20(With%20quality%20checks)-green)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
 [![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-trusted-profile?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/releases/latest)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
@@ -73,9 +73,9 @@ module "trusted_profile {
 
 The 3 variables `trusted_profile_policies`, `trusted_profile_claim_rules`, and `trusted_profile_links` are lists of objects whose fields are mapped out to match the arguments for the provider, for more information on the variables visit the following provider documentation:
 
-* [trusted_profile_policies](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.53.0/docs/resources/iam_trusted_profile_policy)
-* [trusted_profile_claim_rules](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.53.0/docs/resources/iam_trusted_profile_claim_rule)
-* [trusted_profile_links](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.53.0/docs/resources/iam_trusted_profile_link)
+* [trusted_profile_policies](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_policy)
+* [trusted_profile_claim_rules](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_claim_rule)
+* [trusted_profile_links](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_link)
 
 ### Required IAM access policies
 
