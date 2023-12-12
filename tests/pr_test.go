@@ -5,8 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
@@ -14,27 +12,12 @@ import (
 const resourceGroup = "geretain-test-resources"
 const completeExampleDir = "examples/complete"
 
-func sshPublicKey(t *testing.T) string {
-	pubKey, keyErr := common.GenerateSshRsaPublicKey()
-
-	// if error producing key (very unexpected) fail test immediately
-	require.NoError(t, keyErr, "SSH Keygen failed, without public ssh key test cannot continue")
-
-	return pubKey
-}
-
 func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
-
-	sshPublicKey := sshPublicKey(t)
-
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  dir,
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"ssh_key": sshPublicKey,
-		},
 	})
 	return options
 }

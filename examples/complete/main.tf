@@ -32,9 +32,13 @@ resource "ibm_is_subnet" "subnet" {
   tags            = var.resource_tags
 }
 
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"
+}
+
 resource "ibm_is_ssh_key" "public_key" {
   name       = "${var.prefix}-key"
-  public_key = var.ssh_key
+  public_key = trimspace(tls_private_key.ssh_key.public_key_openssh)
 }
 
 data "ibm_is_image" "image" {

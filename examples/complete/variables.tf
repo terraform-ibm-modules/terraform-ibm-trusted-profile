@@ -27,8 +27,3 @@ variable "resource_tags" {
   description = "Optional list of tags to be added to created resources"
   default     = []
 }
-
-variable "ssh_key" {
-  type        = string
-  description = "Public SSH Key used to access the VSI."
-}
