@@ -21,3 +21,8 @@ output "resource_tags" {
   description = "List of resource tags"
   value       = var.resource_tags
 }
+
+output "trusted_profile" {
+  description = "The provisioned trusted profile"
+  value       = module.trusted_profile
+}
