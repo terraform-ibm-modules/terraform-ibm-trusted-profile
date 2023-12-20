@@ -9,4 +9,3 @@ The text below should describe exactly what resources are provisioned / configur
 An end-to-end basic example that will provision the following:
 - A new Trusted Profile
 - A valid Access Policy for the profile
-- A valid Claim Rule for the Policy
