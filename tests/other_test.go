@@ -15,7 +15,7 @@ func TestRunBasicExample(t *testing.T) {
 
 	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
 		Testing:      t,
-		TerraformDir: "examples/basic",
+		TerraformDir: basicExampleDir,
 		Prefix:       "trusted-prof-basic",
 	})
 
