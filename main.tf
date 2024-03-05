@@ -206,7 +206,7 @@ locals {
   validate_link_namespace = var.trusted_profile_links == null ? [] : [
     for i, link in var.trusted_profile_links : [
       for j, obj in link.links : (
-        lookup(obj, "namespace", null) == null && link.cr_type == "VSI" ? true :
+        (lookup(obj, "namespace", null) == null && link.cr_type == "VSI") || link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA" ? true :
         tobool("Value for `var.trusted_profile_links[${i}].link[${j}].namespace` should only be provided if `var.trusted_profile_links[${i}].cr_type` is `IKS_SA` or `ROKS_SA`.")
       )
     ]
@@ -215,7 +215,7 @@ locals {
   validate_link_name = var.trusted_profile_links == null ? [] : [
     for i, link in var.trusted_profile_links : [
       for j, obj in link.links :
-      lookup(obj, "name", null) == null && link.cr_type == "VSI" ? true :
+      (lookup(obj, "name", null) == null && link.cr_type == "VSI") || link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA" ? true :
       tobool("Value for `var.trusted_profile_links[${i}].link[${j}].name` should only be provided if `var.trusted_profile_links[${i}].cr_type` is `IKS_SA` or `ROKS_SA`.")
     ]
   ]
