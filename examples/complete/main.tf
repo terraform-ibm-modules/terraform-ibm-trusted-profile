@@ -70,11 +70,11 @@ module "trusted_profile" {
       resource_group_id = module.resource_group.resource_group_id
       service           = "kms"
     }]
-  },{
+    }, {
     roles = ["Viewer"]
     resources = [{
-      resource = module.resource_group.resource_group_id
-      resource_type           = "resource-group"
+      resource      = module.resource_group.resource_group_id
+      resource_type = "resource-group"
     }]
   }]
 
