@@ -18,16 +18,6 @@ locals {
     ) && (policy.account_management != null || policy.resources != null || policy.resource_attributes != null) ? true :
     tobool("Values for `var.trusted_profile_policies[${i}].account_management`, `var.trusted_profile_policies[${i}].resource_attributes`, and `var.trusted_profile_policies[${i}].resources` are mutually exclusive.")
   ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_policies_resources_required = [
-    for i, policy in var.trusted_profile_policies :
-    lookup(policy, "resources", null) == null ? [] : [
-      for j, resource in policy.resources :
-      (lookup(resource, "service", null) != null && lookup(resource, "service_type", null) == null) ||
-      (lookup(resource, "service", null) == null && lookup(resource, "service_type", null) != null) ?
-      true : tobool("Values for `var.trusted_profile_policies[${i}].resources[${j}].service` and `var.trusted_profile_policies[${i}].resources[${j}].service_type` are mutually exclusive.")
-    ]
-  ]
 
   # Transformation of maps
   policy_map = {
