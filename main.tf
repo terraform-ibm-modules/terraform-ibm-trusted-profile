@@ -216,7 +216,11 @@ locals {
       name    = obj.name
       links = {
         for j, link in obj.links :
-        "${var.trusted_profile_name}-${j}-link" => link
+        "${var.trusted_profile_name}-${i}-${j}" => {
+          crn       = link.crn
+          namespace = link.namespace
+          name      = link.name
+        }
       }
     }
   }
@@ -229,12 +233,9 @@ resource "ibm_iam_trusted_profile_link" "link" {
   cr_type    = each.value.cr_type
   name       = each.value.name
 
-  dynamic "link" {
-    for_each = each.value.links
-    content {
-      crn       = link.value.crn
-      namespace = link.value.namespace
-      name      = link.value.name
-    }
+  link {
+    crn       = each.value.link_crn
+    namespace = each.value.namespace
+    name      = each.value.link_name
   }
 }
