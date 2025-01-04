@@ -209,32 +209,33 @@ locals {
       tobool("Value for `var.trusted_profile_links[${i}].link[${j}].name` should only be provided if `var.trusted_profile_links[${i}].cr_type` is `IKS_SA` or `ROKS_SA`.")
     ]
   ]
-  link_map = var.trusted_profile_links == null ? {} : {
-    for i, obj in var.trusted_profile_links :
-    "${var.trusted_profile_name}-${i}" => {
-      cr_type = obj.cr_type
-      name    = obj.name
-      links = {
-        for j, link in obj.links :
-        "${var.trusted_profile_name}-${i}-${j}" => {
-          crn       = link.crn
-          namespace = link.namespace
-          name      = link.name
-        }
+  # Flattened map of links
+  flat_links = flatten([
+    for i, obj in var.trusted_profile_links : [
+      for j, link in obj.links : {
+        trusted_profile_name = var.trusted_profile_name
+        index                = "${i}-${j}"
+        cr_type              = obj.cr_type
+        name                 = obj.name
+        crn                  = link.crn
+        namespace            = link.namespace
+        link_name            = link.name
       }
-    }
-  }
+    ]
+  ])
 }
 
 resource "ibm_iam_trusted_profile_link" "link" {
-  for_each = local.link_map
+  for_each = tomap({
+    for link in local.flat_links : "${link.trusted_profile_name}-${link.index}" => link
+  })
 
   profile_id = ibm_iam_trusted_profile.profile.profile_id
   cr_type    = each.value.cr_type
   name       = each.value.name
 
   link {
-    crn       = each.value.link_crn
+    crn       = each.value.crn
     namespace = each.value.namespace
     name      = each.value.link_name
   }
