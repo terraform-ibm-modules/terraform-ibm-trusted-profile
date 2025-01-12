@@ -89,16 +89,9 @@ module "trusted_profile" {
     cr_type = "VSI"
   }]
   trusted_profile_links = [{
-    cr_type = "ROKS_SA"
+    cr_type = "VSI"
     links = [{
-      crn       = "crn:v1:bluemix:public:containers-kubernetes:eu-de:a/abac0df06b644a9cabc6e44f55b3880e:cq2jh5qf02c23i9h66ag::"
-      namespace = "test1"
-      name      = "test1"
-      },
-      {
-        crn       = "crn:v1:bluemix:public:containers-kubernetes:eu-de:a/abac0df06b644a9cabc6e44f55b3880e:cq2jh5qf02c23i9h66ag::"
-        namespace = "test2"
-        name      = "test2"
+      crn = ibm_is_instance.vsi.crn
     }]
   }]
 }
