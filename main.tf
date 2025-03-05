@@ -55,7 +55,7 @@ locals {
 resource "ibm_iam_trusted_profile_policy" "policy" {
   for_each = local.policy_map
 
-  profile_id         = ibm_iam_trusted_profile.profile.profile_id
+  profile_id         = ibm_iam_trusted_profile.profile.id
   roles              = each.value.roles
   account_management = each.value.account_management
   description        = each.value.description
@@ -168,7 +168,7 @@ locals {
 resource "ibm_iam_trusted_profile_claim_rule" "claim_rule" {
   for_each = local.claim_map
 
-  profile_id = ibm_iam_trusted_profile.profile.profile_id
+  profile_id = ibm_iam_trusted_profile.profile.id
   type       = each.value.type
   cr_type    = each.value.cr_type
   expiration = each.value.expiration
