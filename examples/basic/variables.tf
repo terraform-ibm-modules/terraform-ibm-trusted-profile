@@ -19,3 +19,12 @@ variable "prefix" {
   description = "Prefix to append to all resources created by this example"
   default     = "basic-trusted-profile"
 }
+variable "app_config_crn" {
+  type        = string
+  description = "CRN of the App Configuration instance"
+}
+
+variable "scc_wp_crn" {
+  type        = string
+  description = "CRN of the SCC Workload Protection instance"
+}
