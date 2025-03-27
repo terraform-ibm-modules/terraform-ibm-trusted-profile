@@ -1,8 +1,8 @@
 resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
-  name        = "${var.prefix}-all-identity-policy-template"
+  name        = "${var.prefix}01-all-identity-policy-template01-${var.suffix}"
   policy {
     type        = "access"
-    description = "Reader access for All Identity and Access enabled services"
+    description = "testing Reader access for All Identity and Access enabled services - ${var.suffix}"
     resource {
       attributes {
         key      = "serviceType"
@@ -16,10 +16,10 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
 }
 
 resource "ibm_iam_policy_template" "profile_template_policy_all_management" {
-  name        = "${var.prefix}-all-management-policy-template"
+  name        = "${var.prefix}01-all-management-policy-template-01${var.suffix}"
   policy {
     type        = "access"
-    description = "Reader access for All Account Management Services"
+    description = "01Reader access for All Account Management Services - ${var.suffix}"
     resource {
       attributes {
         key      = "serviceType"

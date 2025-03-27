@@ -2,7 +2,10 @@ variable "prefix" {
   description = "Prefix for naming the templates"
   type        = string
 }
-
+variable "suffix" {
+  type        = string
+  description = "Suffix to ensure unique naming of trusted profile templates and resources"
+}
 variable "profile_name" {
   description = "Name of the trusted profile inside the template"
   type        = string
