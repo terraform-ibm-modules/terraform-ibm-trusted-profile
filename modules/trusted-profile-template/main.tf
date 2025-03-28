@@ -2,7 +2,7 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
   name        = "${var.prefix}01-all-identity-policy-template01-${var.suffix}"
   policy {
     type        = "access"
-    description = "testing Reader access for All Identity and Access enabled services - ${var.suffix}"
+    description = "Unique IAM access template ${var.suffix} testing rj"
     resource {
       attributes {
         key      = "serviceType"
@@ -10,16 +10,16 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
         value    = "service"
       }
     }
-    roles     = ["Viewer", "Service Configuration Reader", "Reader"]
+    roles     = ["Viewer", "Service Configuration Reader", "Administrator"]
   }
   committed = true
 }
 
 resource "ibm_iam_policy_template" "profile_template_policy_all_management" {
-  name        = "${var.prefix}01-all-management-policy-template-01${var.suffix}"
+  name        = "${var.prefix}01-all-management-policy-template-01-${var.suffix}"
   policy {
     type        = "access"
-    description = "01Reader access for All Account Management Services - ${var.suffix}"
+    description = "01testing for all management - ${var.suffix}"
     resource {
       attributes {
         key      = "serviceType"
@@ -27,7 +27,7 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_management" {
         value    = "platform_service"
       }
     }
-    roles     = ["Viewer", "Service Configuration Reader"]
+    roles     = ["Administrator", "Service Configuration Reader"]
   }
   committed = true
 }

@@ -1,5 +1,13 @@
+output "all_enterprise_accounts" {
+  value = module.trusted_profile_template.enterprise_account_ids
+}
+
 resource "random_id" "suffix" {
   byte_length = 4
+}
+
+locals {
+  timestamp = formatdate("YYYYMMDDhhmmss", timestamp())
 }
 
 provider "ibm" {
@@ -102,7 +110,7 @@ module "trusted_profile_scc_wp" {
 module "trusted_profile_template" {
   source              = "../../modules/trusted-profile-template"
   prefix              = "app-config"
-  suffix              = random_id.suffix.hex
+  suffix              = "${random_id.suffix.hex}-${local.timestamp}"
   profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP testingrj"
   profile_description = "Template profile used to onboard child accounts testingrj"
   identity_crn        = var.app_config_crn
