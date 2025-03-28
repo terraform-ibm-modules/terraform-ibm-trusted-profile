@@ -52,13 +52,13 @@ module "trusted_profile_app_config_enterprise" {
 
   trusted_profile_policies = [
     {
-      roles = ["Viewer", "Template Administrator", "Assignment Administrator"]
+      roles = ["Viewer",  "Template Assignment Reader"]
       resource_attributes = [{
         name     = "service_group_id"
         value    = "IAM"
         operator = "stringEquals"
       }]
-      description = "All IAM Account Management services testing by rj"
+      description = "All IAM Account Management services using custom role - testing by rj"
     },
     {
       roles = ["Viewer"]

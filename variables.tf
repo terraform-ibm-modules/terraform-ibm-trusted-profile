@@ -2,6 +2,12 @@
 # Input Variables
 ########################################################################################################################
 
+variable "custom_role_name" {
+  description = "Optional custom role to include in profile policies"
+  type        = string
+  default     = null
+}
+
 variable "trusted_profile_name" {
   type        = string
   description = "Name of the trusted profile."
