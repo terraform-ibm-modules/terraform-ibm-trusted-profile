@@ -52,6 +52,14 @@ module "trusted_profile_app_config_general" {
   }]
 }
 
+resource "ibm_iam_trusted_profile_identity" "trust_relationship_app_config_general" {
+  profile_id    = module.trusted_profile_app_config_general.profile_id
+  identifier    = var.app_config_crn
+  identity_type = "crn"
+  type          = "crn"
+}
+
+
 # Trusted Profile for App Config enterprise-level permissions
 module "trusted_profile_app_config_enterprise" {
   source                         = "../.."
@@ -87,6 +95,13 @@ module "trusted_profile_app_config_enterprise" {
   }]
 }
 
+resource "ibm_iam_trusted_profile_identity" "trust_relationship_app_config_enterprise" {
+  profile_id    = module.trusted_profile_app_config_enterprise.profile_id
+  identifier    = var.app_config_crn
+  identity_type = "crn"
+  type          = "crn"
+}
+
 # Trusted Profile for SCC-WP service interaction
 module "trusted_profile_scc_wp" {
   source                         = "../.."
@@ -118,6 +133,13 @@ module "trusted_profile_scc_wp" {
       crn = var.scc_wp_crn
     }]
   }]
+}
+
+resource "ibm_iam_trusted_profile_identity" "trust_relationship_scc_wp" {
+  profile_id    = module.trusted_profile_scc_wp.profile_id
+  identifier    = var.scc_wp_crn
+  identity_type = "crn"
+  type          = "crn"
 }
 
 # Trusted Profile Template module

@@ -1,6 +1,10 @@
 ########################################################################################################################
 # Outputs
 ########################################################################################################################
+output "profile_id" {
+  description = "ID of the trusted profile"
+  value       = ibm_iam_trusted_profile.profile.profile_id
+}
 
 output "trusted_profile" {
   description = "Output of the Trusted Profile"
