@@ -1,25 +1,31 @@
+# Output block to show all enterprise account IDs from the template module
 output "all_enterprise_accounts" {
   value = module.trusted_profile_template.enterprise_account_ids
 }
 
+# Generates a random suffix to ensure unique resource names
 resource "random_id" "suffix" {
   byte_length = 4
 }
 
+# Creates a timestamp used for naming
 locals {
   timestamp = formatdate("YYYYMMDDhhmmss", timestamp())
 }
 
+# IBM Cloud provider setup
 provider "ibm" {
   region           = "us-south"
   ibmcloud_api_key = var.ibmcloud_api_key
 }
 
+# Trusted Profile for general App Config permissions
 module "trusted_profile_app_config_general" {
   source                         = "../.."
   trusted_profile_name           = "app-config-general-profile-${var.suffix}"
   trusted_profile_description    = "Trusted Profile for App Config general permissions"
 
+  # Policies include Viewer and Reader access on services
   trusted_profile_policies = [
     {
       roles              = ["Viewer", "Service Configuration Reader"]
@@ -37,6 +43,7 @@ module "trusted_profile_app_config_general" {
     }
   ]
 
+  # Trust link with App Config CRN
   trusted_profile_links = [{
     cr_type = "VSI"
     links = [{
@@ -45,14 +52,16 @@ module "trusted_profile_app_config_general" {
   }]
 }
 
+# Trusted Profile for App Config enterprise-level permissions
 module "trusted_profile_app_config_enterprise" {
   source                         = "../.."
   trusted_profile_name           = "app-config-enterprise-profile-${var.suffix}"
   trusted_profile_description    = "Trusted Profile for App Config to manage IAM templates"
 
+  # Uses a custom role and Viewer for IAM permissions
   trusted_profile_policies = [
     {
-      roles = ["Viewer",  "Template Assignment Reader"]
+      roles = ["Viewer", "Template Assignment Reader"]
       resource_attributes = [{
         name     = "service_group_id"
         value    = "IAM"
@@ -69,6 +78,7 @@ module "trusted_profile_app_config_enterprise" {
     }
   ]
 
+  # Trust link with App Config CRN
   trusted_profile_links = [{
     cr_type = "VSI"
     links = [{
@@ -77,11 +87,13 @@ module "trusted_profile_app_config_enterprise" {
   }]
 }
 
+# Trusted Profile for SCC-WP service interaction
 module "trusted_profile_scc_wp" {
   source                         = "../.."
   trusted_profile_name           = "scc-wp-profile-${var.suffix}"
   trusted_profile_description    = "Trusted Profile for SCC-WP to interact with App Config testing by rj"
 
+  # Grants access to App Config and Enterprise services
   trusted_profile_policies = [
     {
       roles = ["Viewer", "Service Configuration Reader"]
@@ -99,6 +111,7 @@ module "trusted_profile_scc_wp" {
     }
   ]
 
+  # Trust link with SCC-WP CRN
   trusted_profile_links = [{
     cr_type = "VSI"
     links = [{
@@ -107,6 +120,7 @@ module "trusted_profile_scc_wp" {
   }]
 }
 
+# Trusted Profile Template module
 module "trusted_profile_template" {
   source              = "../../modules/trusted-profile-template"
   prefix              = "app-config"
