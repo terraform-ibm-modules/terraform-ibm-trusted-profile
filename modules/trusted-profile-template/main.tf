@@ -10,7 +10,7 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
         value    = "service"
       }
     }
-    roles     = ["Viewer", "Service Configuration Reader", "Administrator"]
+    roles     = ["Viewer", "Service Configuration Reader", "Reader"]
   }
   committed = true
 }
@@ -27,7 +27,7 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_management" {
         value    = "platform_service"
       }
     }
-    roles     = ["Administrator", "Service Configuration Reader"]
+    roles     = ["Viewer", "Service Configuration Reader"]
   }
   committed = true
 }
