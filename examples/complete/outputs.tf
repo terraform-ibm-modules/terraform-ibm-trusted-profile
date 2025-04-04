@@ -1,6 +1,10 @@
 ##############################################################################
 # Outputs
 ##############################################################################
+output "trusted_profile_template_id" {
+  description = "The template ID for the trusted profile template"
+  value       = module.trusted_profile_template.trusted_profile_template_id
+}
 
 output "region" {
   description = "The region all resources were provisioned in"

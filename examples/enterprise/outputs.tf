@@ -1,6 +1,10 @@
 ########################################################################################################################
 # Outputs
 ########################################################################################################################
+output "trusted_profile_template_id" {
+  value = split("/", module.trusted_profile_template.trusted_profile_template_id_raw)[0]
+}
+
 output "trusted_profile_id_app_config_general" {
   value = module.trusted_profile_app_config_general.profile_id
 }

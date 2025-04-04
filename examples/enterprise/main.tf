@@ -153,4 +153,3 @@ module "trusted_profile_template" {
   ibmcloud_api_key    = var.ibmcloud_api_key
   region              = var.region
 }
-

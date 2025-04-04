@@ -7,9 +7,8 @@ output "enterprise_account_ids" {
   value       = data.ibm_enterprise_accounts.all_accounts.accounts[*].id
 }
 
-output "trusted_profile_template_id" {
-  description = "The ID of the Trusted Profile Template"
-  value       = ibm_iam_trusted_profile_template.trusted_profile_template_instance.template_id
+output "trusted_profile_template_id_raw" {
+  value = ibm_iam_trusted_profile_template.trusted_profile_template_instance.id
 }
 
 output "trusted_profile_template_version" {
@@ -19,6 +18,6 @@ output "trusted_profile_template_version" {
 
 output "trusted_profile_template_assignment_ids" {
   description = "The list of assignment IDs to child accounts"
-  value       = [for assignment in ibm_iam_trusted_profile_template_assignment.account_settings_template_assignment_instance : assignment.id]
+  value       = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
 }
 
