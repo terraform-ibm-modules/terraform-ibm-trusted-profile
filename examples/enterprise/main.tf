@@ -111,7 +111,7 @@ module "trusted_profile_scc_wp" {
   # Grants access to App Config and Enterprise services
   trusted_profile_policies = [
     {
-      roles = ["Viewer", "Service Configuration Reader"]
+      roles = ["Viewer", "Service Configuration Reader", "Manager"]
       resources = [{
         service = "apprapp"
       }]
