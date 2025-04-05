@@ -70,21 +70,19 @@ data "ibm_enterprise_account_groups" "all_groups" {
 
 
 
+
 locals {
-  # 1. Get all accounts
   all_accounts = data.ibm_enterprise_accounts.all_accounts.accounts
+  all_groups   = data.ibm_enterprise_account_groups.all_groups.account_groups
 
-  # 2. Get all account groups
-  all_groups = data.ibm_enterprise_account_groups.all_groups.account_groups
-
-  # 3. Flatten all child account IDs from groups
+  # Flatten all account IDs inside groups
   accounts_in_groups = distinct(flatten([
     for group in local.all_groups : [
       for account in try(group.accounts, []) : account.id
     ]
   ]))
 
-  # 4. Accounts that are NOT in any group and not the current account
+  # Accounts NOT in any group and not the current root account
   filtered_accounts = [
     for account in local.all_accounts : {
       id   = account.id
@@ -94,7 +92,7 @@ locals {
        account.id != data.ibm_iam_account_settings.iam_account_settings.account_id
   ]
 
-  # 5. All account groups
+  # All account groups
   group_targets = [
     for group in local.all_groups : {
       id   = group.id
@@ -102,9 +100,9 @@ locals {
     }
   ]
 
-  # 6. Combine both
+  # Combine filtered accounts + all groups into one map
   combined_targets = {
-    for target in concat(local.group_targets, local.filtered_accounts) :
+    for target in concat(local.filtered_accounts, local.group_targets) :
     "${target.type}-${target.id}" => target
   }
 }
@@ -116,5 +114,14 @@ resource "ibm_iam_trusted_profile_template_assignment" "account_settings_templat
   template_version = ibm_iam_trusted_profile_template.trusted_profile_template_instance.version
   target           = each.value.id
   target_type      = each.value.type
+
+  lifecycle {
+    ignore_changes = [status]
+    create_before_destroy = true
+  }
+
+  provisioner "local-exec" {
+    command = "echo 🚧 Assigned template to ${each.value.type}: ${each.value.id} — handled status gracefully"
+  }
 }
 
