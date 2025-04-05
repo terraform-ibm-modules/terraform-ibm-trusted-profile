@@ -2,7 +2,7 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
   name        = "${var.prefix}01-all-identity-policy-template01-${var.suffix}"
   policy {
     type        = "access"
-    description = "Unique IAM access template ${var.suffix} testing rj"
+    description = "IAM access template ${var.suffix} "
     resource {
       attributes {
         key      = "serviceType"
@@ -16,10 +16,10 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
 }
 
 resource "ibm_iam_policy_template" "profile_template_policy_all_management" {
-  name        = "${var.prefix}01-all-management-policy-template-01-${var.suffix}"
+  name        = "${var.prefix}all-management-policy-template${var.suffix}"
   policy {
     type        = "access"
-    description = "01testing for all management - ${var.suffix}"
+    description = "Policy template for all management - ${var.suffix}"
     resource {
       attributes {
         key      = "serviceType"
@@ -58,19 +58,55 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   committed = true
 }
 
-data "ibm_enterprise_accounts" "all_accounts" {}
-
 data "ibm_iam_account_settings" "iam_account_settings" {}
 
-resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
-  for_each         = {
-    for account in data.ibm_enterprise_accounts.all_accounts.accounts :
-    account.id => account if account.id != data.ibm_iam_account_settings.iam_account_settings.account_id
+data "ibm_enterprise_accounts" "all_accounts" {}
+
+data "ibm_enterprise_account_groups" "all_groups" {
+  depends_on = [data.ibm_enterprise_accounts.all_accounts]
+}
+
+
+locals {
+  group_targets = var.onboard_account_groups ? [
+    for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
+      id   = group.id
+      type = "AccountGroup"
+    }
+  ] : [
+    for group_id in var.account_group_ids : {
+      id   = group_id
+      type = "AccountGroup"
+    }
+  ]
+
+  account_targets = var.onboard_account_groups ? [] : [
+    for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
+      id   = account.id
+      type = "Account"
+    } if account.id != data.ibm_iam_account_settings.iam_account_settings.account_id
+  ]
+
+  combined_targets = {
+    for target in concat(local.account_targets, local.group_targets) :
+    "${target.type}-${target.id}" => target
   }
+}
+
+
+
+
+resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
+  for_each         = local.combined_targets
 
   template_id      = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
   template_version = ibm_iam_trusted_profile_template.trusted_profile_template_instance.version
   target           = each.value.id
-  target_type      = "Account"
+  target_type      = each.value.type
+
+
+  lifecycle {
+    ignore_changes = [template_version]
+  }
 }
 

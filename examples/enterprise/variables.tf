@@ -1,6 +1,18 @@
 ########################################################################################################################
 # Input variables
 ########################################################################################################################
+variable "onboard_account_groups" {
+  type        = bool
+  default     = false
+  description = "Definir a true pour embarquer tous les groupes de comptes."
+}
+
+variable "account_group_ids" {
+  type        = list(string)
+  default     = []
+  description = "Liste des groupes de comptes a embarquer si onboard_account_groups est false."
+}
+
 variable "create_policy_templates" {
   type        = bool
   description = "Whether to create new policy templates. Set to false if they already exist."

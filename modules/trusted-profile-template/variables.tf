@@ -1,3 +1,15 @@
+variable "onboard_account_groups" {
+  type        = bool
+  default     = false
+  description = "Whether to onboard all account groups to the template."
+}
+
+variable "account_group_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of account group IDs to assign if onboarding is enabled."
+}
+
 variable "prefix" {
   description = "Prefix for naming the templates"
   type        = string

@@ -75,7 +75,7 @@ module "trusted_profile_app_config_enterprise" {
         value    = "IAM"
         operator = "stringEquals"
       }]
-      description = "All IAM Account Management services using custom role - testing by rj"
+      description = "All IAM Account Management services - using custom role"
     },
     {
       roles = ["Viewer"]
@@ -152,4 +152,7 @@ module "trusted_profile_template" {
   identity_crn        = var.app_config_crn
   ibmcloud_api_key    = var.ibmcloud_api_key
   region              = var.region
+  onboard_account_groups = var.onboard_account_groups
+  account_group_ids      = var.account_group_ids
+
 }
