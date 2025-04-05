@@ -67,34 +67,47 @@ data "ibm_enterprise_account_groups" "all_groups" {
 }
 
 
+
+
+
 locals {
-  group_targets = var.onboard_account_groups ? [
-    for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
+  # 1. Get all accounts
+  all_accounts = data.ibm_enterprise_accounts.all_accounts.accounts
+
+  # 2. Get all account groups
+  all_groups = data.ibm_enterprise_account_groups.all_groups.account_groups
+
+  # 3. Flatten all child account IDs from groups
+  accounts_in_groups = distinct(flatten([
+    for group in local.all_groups : [
+      for account in try(group.accounts, []) : account.id
+    ]
+  ]))
+
+  # 4. Accounts that are NOT in any group and not the current account
+  filtered_accounts = [
+    for account in local.all_accounts : {
+      id   = account.id
+      type = "Account"
+    }
+    if !(contains(local.accounts_in_groups, account.id)) &&
+       account.id != data.ibm_iam_account_settings.iam_account_settings.account_id
+  ]
+
+  # 5. All account groups
+  group_targets = [
+    for group in local.all_groups : {
       id   = group.id
       type = "AccountGroup"
     }
-  ] : [
-    for group_id in var.account_group_ids : {
-      id   = group_id
-      type = "AccountGroup"
-    }
   ]
 
-  account_targets = var.onboard_account_groups ? [] : [
-    for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
-      id   = account.id
-      type = "Account"
-    } if account.id != data.ibm_iam_account_settings.iam_account_settings.account_id
-  ]
-
+  # 6. Combine both
   combined_targets = {
-    for target in concat(local.account_targets, local.group_targets) :
+    for target in concat(local.group_targets, local.filtered_accounts) :
     "${target.type}-${target.id}" => target
   }
 }
-
-
-
 
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
   for_each         = local.combined_targets
@@ -103,10 +116,5 @@ resource "ibm_iam_trusted_profile_template_assignment" "account_settings_templat
   template_version = ibm_iam_trusted_profile_template.trusted_profile_template_instance.version
   target           = each.value.id
   target_type      = each.value.type
-
-
-  lifecycle {
-    ignore_changes = [template_version]
-  }
 }
 

@@ -2,6 +2,8 @@
 # Outputs
 ########################################################################################################################
 
+
+
 output "enterprise_account_ids" {
   description = "List of child enterprise account IDs"
   value       = data.ibm_enterprise_accounts.all_accounts.accounts[*].id
