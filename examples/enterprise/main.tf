@@ -106,7 +106,7 @@ resource "ibm_iam_trusted_profile_identity" "trust_relationship_app_config_enter
 module "trusted_profile_scc_wp" {
   source                         = "../.."
   trusted_profile_name           = "scc-wp-profile-${var.suffix}"
-  trusted_profile_description    = "Trusted Profile for SCC-WP to interact with App Config testing by rj"
+  trusted_profile_description    = "Trusted Profile for SCC-WP to interact with App Config"
 
   # Grants access to App Config and Enterprise services
   trusted_profile_policies = [
