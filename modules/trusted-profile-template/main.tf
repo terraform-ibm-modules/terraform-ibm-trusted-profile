@@ -71,57 +71,35 @@ data "ibm_enterprise_account_groups" "all_groups" {
 
 
 
+# Local variables for targeting only Account Groups
 locals {
-  all_accounts = data.ibm_enterprise_accounts.all_accounts.accounts
-  all_groups   = data.ibm_enterprise_account_groups.all_groups.account_groups
-
-  # Flatten all account IDs inside groups
-  accounts_in_groups = distinct(flatten([
-    for group in local.all_groups : [
-      for account in try(group.accounts, []) : account.id
-    ]
-  ]))
-
-  # Accounts NOT in any group and not the current root account
-  filtered_accounts = [
-    for account in local.all_accounts : {
-      id   = account.id
-      type = "Account"
-    }
-    if !(contains(local.accounts_in_groups, account.id)) &&
-       account.id != data.ibm_iam_account_settings.iam_account_settings.account_id
-  ]
-
-  # All account groups
+  # Retrieve all enterprise account groups
   group_targets = [
-    for group in local.all_groups : {
+    for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
       id   = group.id
       type = "AccountGroup"
     }
   ]
 
-  # Combine filtered accounts + all groups into one map
+  # Prepare a map for Terraform's for_each using group id and type
   combined_targets = {
-    for target in concat(local.filtered_accounts, local.group_targets) :
+    for target in local.group_targets :
     "${target.type}-${target.id}" => target
   }
 }
 
+# Resource to assign the IAM trusted profile template to Account Groups only
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
-  for_each         = local.combined_targets
+  for_each = local.combined_targets
 
   template_id      = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
   template_version = ibm_iam_trusted_profile_template.trusted_profile_template_instance.version
   target           = each.value.id
   target_type      = each.value.type
 
-  lifecycle {
-    ignore_changes = [status]
-    create_before_destroy = true
-  }
-
+  # Optional: Log success with local-exec (for visibility)
   provisioner "local-exec" {
-    command = "echo 🚧 Assigned template to ${each.value.type}: ${each.value.id} — handled status gracefully"
+    command = "echo ✅ Assigned template to ${each.value.type}: ${each.value.id}"
   }
 }
 
