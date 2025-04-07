@@ -1,6 +1,6 @@
 variable "onboard_account_groups" {
   type        = bool
-  default     = false
+  default     = true
   description = "Whether to onboard all account groups to the template."
 }
 
