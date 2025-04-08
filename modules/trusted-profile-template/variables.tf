@@ -1,3 +1,13 @@
+variable "policy_templates" {
+  description = "List of IAM policy templates to create"
+  type = list(object({
+    name        = string
+    description = string
+    roles       = list(string)
+    service     = string
+  }))
+}
+
 variable "onboard_account_groups" {
   type        = bool
   default     = true

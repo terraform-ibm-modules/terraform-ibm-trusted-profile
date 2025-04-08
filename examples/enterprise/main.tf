@@ -13,11 +13,6 @@ locals {
   timestamp = formatdate("YYYYMMDDhhmmss", timestamp())
 }
 
-# IBM Cloud provider setup
-provider "ibm" {
-  region           = "us-south"
-  ibmcloud_api_key = var.ibmcloud_api_key
-}
 
 # Trusted Profile for general App Config permissions
 module "trusted_profile_app_config_general" {
@@ -154,18 +149,31 @@ module "trust_relationship_scc_wp" {
 
 
 
-
-# Trusted Profile Template module
 module "trusted_profile_template" {
   source              = "../../modules/trusted-profile-template"
   prefix              = "app-config"
   suffix              = "${random_id.suffix.hex}-${local.timestamp}"
-  profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP testingrj"
-  profile_description = "Template profile used to onboard child accounts testingrj"
+  profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
+  profile_description = "Template profile used to onboard child accounts"
   identity_crn        = var.app_config_crn
   ibmcloud_api_key    = var.ibmcloud_api_key
   region              = var.region
   onboard_account_groups = var.onboard_account_groups
   account_group_ids      = var.account_group_ids
 
+  policy_templates = [
+    {
+      name        = "identity-access"
+      description = "Policy template for identity services"
+      roles       = ["Viewer", "Reader"]
+      service     = "service"
+    },
+    {
+      name        = "platform-access"
+      description = "Policy template for platform services"
+      roles       = ["Viewer", "Service Configuration Reader"]
+      service     = "platform_service"
+    }
+  ]
 }
+
