@@ -1,7 +1,3 @@
-# Output block to show all enterprise account IDs from the template module
-output "all_enterprise_accounts" {
-  value = module.trusted_profile_template.enterprise_account_ids
-}
 
 # Generates a random suffix to ensure unique resource names
 resource "random_id" "suffix" {

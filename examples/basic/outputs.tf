@@ -5,3 +5,4 @@
 output "trusted_profile" {
   description = "Trusted Profile outputs"
   value       = module.trusted_profile
+}
