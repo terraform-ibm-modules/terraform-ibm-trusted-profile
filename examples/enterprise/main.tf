@@ -4,9 +4,13 @@ resource "random_id" "suffix" {
   byte_length = 4
 }
 
-# Creates a timestamp used for naming
-locals {
-  timestamp = formatdate("YYYYMMDDhhmmss", timestamp())
+# Generates a custom role
+resource "ibm_iam_custom_role" "template_assignment_reader" {
+  name         = "TemplateAssignmentReader"
+  service      = "iam-identity"
+  display_name = "Template Assignment Reader"
+  description  = "Custom role to allow reading template assignments"
+  actions      = ["iam-identity.profile-assignment.read"]
 }
 
 
@@ -147,13 +151,9 @@ module "trust_relationship_scc_wp" {
 
 module "trusted_profile_template" {
   source              = "../../modules/trusted-profile-template"
-  prefix              = "app-config"
-  suffix              = "${random_id.suffix.hex}-${local.timestamp}"
   profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
   profile_description = "Template profile used to onboard child accounts"
   identity_crn        = var.app_config_crn
-  ibmcloud_api_key    = var.ibmcloud_api_key
-  region              = var.region
   onboard_account_groups = var.onboard_account_groups
   account_group_ids      = var.account_group_ids
 

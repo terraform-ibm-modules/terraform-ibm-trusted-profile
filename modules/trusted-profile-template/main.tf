@@ -4,7 +4,7 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
     pt.name => pt
   }
 
-  name      = "${var.prefix}-${each.key}-${var.suffix}"
+  name = each.value.name
   committed = true
 
   policy {
@@ -24,8 +24,8 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
 }
 
 resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" {
-  name        = "${var.prefix}-trusted-profile-template"
-  description = "${var.prefix}-trusted-profile-template"
+    name        = var.profile_name
+    description = var.profile_description
 
   profile {
     name        = var.profile_name
@@ -80,7 +80,7 @@ resource "ibm_iam_trusted_profile_template_assignment" "account_settings_templat
   target_type      = each.value.type
 
   provisioner "local-exec" {
-    command = "echo ✅ Assigned template to ${each.value.type}: ${each.value.id}"
+    command = "echo Assigned template to ${each.value.type}: ${each.value.id}"
   }
 }
 

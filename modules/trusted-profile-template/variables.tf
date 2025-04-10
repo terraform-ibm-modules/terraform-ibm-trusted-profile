@@ -20,14 +20,6 @@ variable "account_group_ids" {
   description = "List of account group IDs to assign if onboarding is enabled."
 }
 
-variable "prefix" {
-  description = "Prefix for naming the templates"
-  type        = string
-}
-variable "suffix" {
-  type        = string
-  description = "Suffix to ensure unique naming of trusted profile templates and resources"
-}
 variable "profile_name" {
   description = "Name of the trusted profile inside the template"
   type        = string
@@ -42,14 +34,5 @@ variable "identity_crn" {
   description = "CRN of the identity (App Config for example)"
   type        = string
 }
-variable "ibmcloud_api_key" {
-  type        = string
-  description = "IBM Cloud API key"
-  sensitive   = true
-}
 
-variable "region" {
-  type        = string
-  description = "Region for resource provisioning"
-}
 
