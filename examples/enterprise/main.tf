@@ -17,7 +17,7 @@ resource "ibm_iam_custom_role" "template_assignment_reader" {
 # Trusted Profile for general App Config permissions
 module "trusted_profile_app_config_general" {
   source                         = "../.."
-  trusted_profile_name           = "app-config-general-profile-${var.suffix}"
+  trusted_profile_name           = "app-config-general-profile"
   trusted_profile_description    = "Trusted Profile for App Config general permissions"
 
   # Policies include Viewer and Reader access on services
@@ -52,7 +52,7 @@ module "trusted_profile_app_config_general" {
 # Trusted Profile for App Config enterprise-level permissions
 module "trusted_profile_app_config_enterprise" {
   source                         = "../.."
-  trusted_profile_name           = "app-config-enterprise-profile-${var.suffix}"
+  trusted_profile_name           = "app-config-enterprise-profile"
   trusted_profile_description    = "Trusted Profile for App Config to manage IAM templates"
 
   # Uses a custom role and Viewer for IAM permissions
@@ -86,7 +86,7 @@ module "trusted_profile_app_config_enterprise" {
 
 module "trusted_profile_scc_wp" {
   source                         = "../.."
-  trusted_profile_name           = "scc-wp-profile-${var.suffix}"
+  trusted_profile_name           = "scc-wp-profile"
   trusted_profile_description    = "Trusted Profile for SCC-WP to interact with App Config"
 
   # Grants access to App Config and Enterprise services
@@ -154,8 +154,7 @@ module "trusted_profile_template" {
   profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
   profile_description = "Template profile used to onboard child accounts"
   identity_crn        = var.app_config_crn
-  onboard_account_groups = var.onboard_account_groups
-  account_group_ids      = var.account_group_ids
+  onboard_account_groups = true
 
   policy_templates = [
     {
