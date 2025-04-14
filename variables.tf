@@ -101,7 +101,7 @@ variable "trusted_profile_claim_rules" {
         )
       ]) == length(var.trusted_profile_claim_rules)
     )
-    error_message = "Each value in `var.trusted_profile_claim_rules[*].type` must be either `Profile-SAML` or `Profile-CR`."
+    error_message = "Each value in `var.trusted_profile_claim_rules.type` must be either `Profile-SAML` or `Profile-CR`."
   }
 
   validation {
