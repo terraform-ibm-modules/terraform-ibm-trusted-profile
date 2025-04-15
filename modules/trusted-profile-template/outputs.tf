@@ -2,7 +2,10 @@
 # Outputs
 ########################################################################################################################
 
-
+output "trusted_profile_template_id" {
+  description = "The ID of the trusted profile template"
+  value       = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
+}
 
 output "enterprise_account_ids" {
   description = "List of child enterprise account IDs"

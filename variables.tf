@@ -19,6 +19,23 @@ variable "trusted_profile_description" {
   default     = null
 }
 
+variable "create_trusted_relationship" {
+  description = "Whether to create a trusted profile identity (trust relationship)."
+  type        = bool
+  default     = false
+}
+
+variable "trusted_profile_identity" {
+  description = "The identity to trust (required if create_trusted_relationship is true)"
+  type = object({
+    identifier    = string
+    identity_type = string
+    type          = string
+  })
+  default = null
+}
+
+
 variable "trusted_profile_policies" {
   type = list(object({
     roles              = list(string)
