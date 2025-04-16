@@ -1,168 +1,22 @@
-
-# Generates a custom role
-resource "ibm_iam_custom_role" "template_assignment_reader" {
-  name         = "TemplateAssignmentReader"
-  service      = "iam-identity"
-  display_name = "Template Assignment Reader"
-  description  = "Custom role to allow reading template assignments"
-  actions      = ["iam-identity.profile-assignment.read"]
-}
-
-
-# Trusted Profile for general App Config permissions
-module "trusted_profile_app_config_general" {
-  source                         = "../.."
-  trusted_profile_name           = "app-config-general-profile"
-  trusted_profile_description    = "Trusted Profile for App Config general permissions"
-
-  # Policies include Viewer and Reader access on services
-  trusted_profile_policies = [
-    {
-      roles              = ["Viewer", "Service Configuration Reader"]
-      account_management = true
-      description        = "All Account Management Services"
-    },
-    {
-      roles = ["Viewer", "Service Configuration Reader", "Reader"]
-      resource_attributes = [{
-        name     = "serviceType"
-        value    = "service"
-        operator = "stringEquals"
-      }]
-      description = "All Identity and Access enabled services"
-    }
-  ]
-
-  # Trust link with App Config CRN
-  trusted_profile_links = [{
-    cr_type = "VSI"
-    links = [{
-      crn = var.app_config_crn
-    }]
-  }]
-}
-
-
-
-# Trusted Profile for App Config enterprise-level permissions
-module "trusted_profile_app_config_enterprise" {
-  source                         = "../.."
-  trusted_profile_name           = "app-config-enterprise-profile"
-  trusted_profile_description    = "Trusted Profile for App Config to manage IAM templates"
-
-  # Uses a custom role and Viewer for IAM permissions
-  trusted_profile_policies = [
-    {
-      roles = ["Viewer", "Template Assignment Reader"]
-      resource_attributes = [{
-        name     = "service_group_id"
-        value    = "IAM"
-        operator = "stringEquals"
-      }]
-      description = "All IAM Account Management services - using custom role"
-    },
-    {
-      roles = ["Viewer"]
-      resources = [{
-        service = "enterprise"
-      }]
-      description = "Enterprise access"
-    }
-  ]
-
-  # Trust link with App Config CRN
-  trusted_profile_links = [{
-    cr_type = "VSI"
-    links = [{
-      crn = var.app_config_crn
-    }]
-  }]
-}
-
-module "trusted_profile_scc_wp" {
-  source                         = "../.."
-  trusted_profile_name           = "scc-wp-profile"
-  trusted_profile_description    = "Trusted Profile for SCC-WP to interact with App Config"
-
-  # Grants access to App Config and Enterprise services
-  trusted_profile_policies = [
-    {
-      roles = ["Viewer", "Service Configuration Reader", "Manager"]
-      resources = [{
-        service = "apprapp"
-      }]
-      description = "App Config access"
-    },
-    {
-      roles = ["Viewer", "Usage Report Viewer"]
-      resources = [{
-        service = "enterprise"
-      }]
-      description = "Enterprise access"
-    }
-  ]
-
-  # Trust link with SCC-WP CRN
-  trusted_profile_links = [{
-    cr_type = "VSI"
-    links = [{
-      crn = var.scc_wp_crn
-    }]
-  }]
-}
-
-
-module "trust_relationship_app_config_general" {
-  source                    = "../../modules/trusted-profile-instance"
-  profile_id                = module.trusted_profile_app_config_general.profile_id
-  trusted_profile_identity  = {
-    identifier    = var.app_config_crn
-    identity_type = "crn"
-    type          = "crn"
-  }
-}
-
-module "trust_relationship_app_config_enterprise" {
-  source                    = "../../modules/trusted-profile-instance"
-  profile_id                = module.trusted_profile_app_config_enterprise.profile_id
-  trusted_profile_identity  = {
-    identifier    = var.app_config_crn
-    identity_type = "crn"
-    type          = "crn"
-  }
-}
-
-module "trust_relationship_scc_wp" {
-  source                    = "../../modules/trusted-profile-instance"
-  profile_id                = module.trusted_profile_scc_wp.profile_id
-  trusted_profile_identity  = {
-    identifier    = var.scc_wp_crn
-    identity_type = "crn"
-    type          = "crn"
-  }
-}
-
-
-
 module "trusted_profile_template" {
-  source              = "../../modules/trusted-profile-template"
-  profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
-  profile_description = "Template profile used to onboard child accounts"
-  identity_crn        = var.app_config_crn
-  onboard_account_groups = true
+  source = "../../modules/trusted-profile-template"
+
+  template_name        = "minimal-template"
+  template_description = "Minimal example for trusted profile template"
+
+  profile_name         = "Minimal Trusted Profile"
+  profile_description  = "Used for testing minimal usage"
+
+  identity_crn = var.identity_crn
+
+  onboard_all_account_groups = true
 
   policy_templates = [
     {
-      name        = "identity-access"
-      description = "Policy template for identity services"
-      roles       = ["Viewer", "Reader"]
-      service     = "service"
-    },
-    {
-      name        = "platform-access"
-      description = "Policy template for platform services"
-      roles       = ["Viewer", "Service Configuration Reader"]
-      service     = "platform_service"
+      name        = "minimal-access"
+      description = "Basic access to identity services"
+      roles       = ["Viewer"]
+      service     = "service"  # Use supported keyword
     }
   ]
 }

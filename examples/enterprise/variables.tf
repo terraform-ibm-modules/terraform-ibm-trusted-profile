@@ -1,31 +1,6 @@
-########################################################################################################################
-# Input variables
-########################################################################################################################
-
-variable "ibmcloud_api_key" {
+# Identity CRN that will be linked to the trusted profile (e.g., App Config instance CRN)
+variable "identity_crn" {
+  description = "CRN of the identity to link with the trusted profile (e.g. App Config CRN)"
   type        = string
-  description = "The IBM Cloud API Key"
-  sensitive   = true
 }
 
-variable "region" {
-  type        = string
-  description = "Region to provision all resources created by this example"
-  default     = "eu-de"
-}
-
-variable "prefix" {
-  type        = string
-  description = "Prefix to append to all resources created by this example"
-  default     = "basic-trusted-profile"
-}
-
-variable "app_config_crn" {
-  type        = string
-  description = "CRN of the App Configuration instance"
-}
-
-variable "scc_wp_crn" {
-  type        = string
-  description = "CRN of the SCC Workload Protection instance"
-}
