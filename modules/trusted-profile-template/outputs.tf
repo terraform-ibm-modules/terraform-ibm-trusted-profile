@@ -13,7 +13,8 @@ output "enterprise_account_ids" {
 }
 
 output "trusted_profile_template_id_raw" {
-  value = ibm_iam_trusted_profile_template.trusted_profile_template_instance.id
+  description = "Full raw ID (including version) of the trusted profile template"
+  value       = ibm_iam_trusted_profile_template.trusted_profile_template_instance.id
 }
 
 output "trusted_profile_template_version" {

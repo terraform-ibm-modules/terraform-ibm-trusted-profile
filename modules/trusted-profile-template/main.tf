@@ -49,8 +49,6 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   committed = true
 }
 
-data "ibm_iam_account_settings" "iam_account_settings" {}
-
 data "ibm_enterprise_accounts" "all_accounts" {}
 
 data "ibm_enterprise_account_groups" "all_groups" {
@@ -72,7 +70,7 @@ locals {
 }
 
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
-  for_each = local.combined_targets
+  for_each = var.onboard_all_account_groups ? local.combined_targets : {}
 
   template_id      = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
   template_version = ibm_iam_trusted_profile_template.trusted_profile_template_instance.version

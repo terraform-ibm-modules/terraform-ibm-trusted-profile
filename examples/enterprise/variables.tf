@@ -4,3 +4,15 @@ variable "identity_crn" {
   type        = string
 }
 
+variable "ibmcloud_api_key" {
+  description = "IBM Cloud API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "region" {
+  description = "Region where resources will be deployed"
+  type        = string
+  default     = "eu-de"
+}
+

@@ -25,19 +25,27 @@ variable "trusted_profile_identity" {
   default = null
 
   validation {
-    condition     = var.trusted_profile_identity == null || contains(["user", "serviceid", "crn"], var.trusted_profile_identity.type)
+    condition = (
+      var.trusted_profile_identity == null ||
+      contains(["user", "serviceid", "crn"], try(var.trusted_profile_identity.type, ""))
+    )
     error_message = "The 'type' value must be one of: 'user', 'serviceid', or 'crn'."
   }
 
   validation {
-    condition     = var.trusted_profile_identity == null || contains(["user", "serviceid", "crn"], var.trusted_profile_identity.identity_type)
+    condition = (
+      var.trusted_profile_identity == null ||
+      contains(["user", "serviceid", "crn"], try(var.trusted_profile_identity.identity_type, ""))
+    )
     error_message = "The 'identity_type' value must be one of: 'user', 'serviceid', or 'crn'."
   }
 
   validation {
     condition = (
       var.trusted_profile_identity == null ||
-      !(var.trusted_profile_identity.type == "user" && can(var.trusted_profile_identity.accounts) && var.trusted_profile_identity.accounts == null)
+      !(try(var.trusted_profile_identity.type, "") == "user" &&
+        can(var.trusted_profile_identity.accounts) &&
+        try(var.trusted_profile_identity.accounts, null) == null)
     )
     error_message = "If 'type' is 'user' and 'accounts' is set, it must be a non-null list of account IDs."
   }
@@ -126,3 +134,4 @@ variable "trusted_profile_links" {
 
   default = null
 }
+
