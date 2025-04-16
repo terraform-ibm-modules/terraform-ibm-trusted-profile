@@ -18,8 +18,8 @@ This module creates a trusted profile, a set of policies given to the profile, a
     * [trusted-profile-template](./modules/trusted-profile-template)
 * [Examples](./examples)
     * [Basic example](./examples/basic)
-    * [Complete Example: SCC-WP with App Config and Trusted Profiles](./examples/enterprise)
     * [Complete example](./examples/complete)
+    * [Enterprise Example: SCC-WP with App Config and Trusted Profiles](./examples/enterprise)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
@@ -117,7 +117,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_custom_role_name"></a> [custom\_role\_name](#input\_custom\_role\_name) | Optional custom role to include in profile policies | `string` | `null` | no |
 | <a name="input_trusted_profile_claim_rules"></a> [trusted\_profile\_claim\_rules](#input\_trusted\_profile\_claim\_rules) | A list of Trusted Profile Claim Rule objects that are applied to the Trusted Profile created by the module. | <pre>list(object({<br/>    # required arguments<br/>    conditions = list(object({<br/>      claim    = string<br/>      operator = string<br/>      value    = string<br/>    }))<br/><br/>    type = string<br/><br/>    # optional arguments<br/>    cr_type    = optional(string)<br/>    expiration = optional(number)<br/>    name       = optional(string)<br/>    realm_name = optional(string)<br/>  }))</pre> | `null` | no |
 | <a name="input_trusted_profile_description"></a> [trusted\_profile\_description](#input\_trusted\_profile\_description) | Description of the trusted profile. | `string` | `null` | no |
 | <a name="input_trusted_profile_identity"></a> [trusted\_profile\_identity](#input\_trusted\_profile\_identity) | The identity to trust (use only if needed) | <pre>object({<br/>    identifier    = string<br/>    identity_type = string<br/>    type          = string<br/>    accounts      = optional(list(string))<br/>    description   = optional(string)<br/>  })</pre> | `null` | no |
