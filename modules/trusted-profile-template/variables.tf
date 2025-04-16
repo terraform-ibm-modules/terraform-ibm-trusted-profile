@@ -7,8 +7,8 @@ variable "template_name" {
 variable "template_description" {
   description = "Description of the trusted profile template"
   type        = string
+  default     = null
 }
-
 
 variable "policy_templates" {
   description = "List of IAM policy templates to create"
@@ -20,16 +20,10 @@ variable "policy_templates" {
   }))
 }
 
-variable "onboard_account_groups" {
+variable "onboard_all_account_groups" {
   type        = bool
   default     = true
   description = "Whether to onboard all account groups to the template."
-}
-
-variable "account_group_ids" {
-  type        = list(string)
-  default     = []
-  description = "List of account group IDs to assign if onboarding is enabled."
 }
 
 variable "profile_name" {
@@ -40,10 +34,11 @@ variable "profile_name" {
 variable "profile_description" {
   description = "Description of the trusted profile inside the template"
   type        = string
+  default     = null
 }
 
 variable "identity_crn" {
-  description = "CRN of the identity (App Config for example)"
+  description = "CRN of the identity"
   type        = string
 }
 

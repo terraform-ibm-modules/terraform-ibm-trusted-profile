@@ -1,4 +1,4 @@
-# Complete Example: SCC-WP with App Config and Trusted Profiles
+# Enterprise Example: SCC-WP with App Config and Trusted Profiles
 
 > Only supported in an IBM Cloud Enterprise Account.
 
@@ -24,15 +24,6 @@ This example demonstrates how to deploy and configure IAM Trusted Profiles and t
 ## Trust Link Note
 
 Each trusted profile uses the `trusted_profile_links` block to link to a CRN (App Config or SCC-WP), enabling the identity to assume the trusted profile.
-
----
-
-## Requirements
-
-| Name       | Version             |
-|------------|---------------------|
-| Terraform  | >= 1.3.0            |
-| IBM Cloud Provider | >= 1.76.1, < 2.0.0 |
 
 ---
 
