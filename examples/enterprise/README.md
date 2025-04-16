@@ -1,58 +1,45 @@
-# Enterprise Example for Trusted Profile Module
+# Complete Example: SCC-WP with App Config and Trusted Profiles
 
-This example demonstrates how to configure and deploy multiple IBM Cloud IAM Trusted Profiles using the `terraform-ibm-trusted-profile` module. It includes examples for App Configuration and Sysdig Workload Protection (SCC-WP) with associated trust relationships and a reusable IAM template structure.
+> Only supported in an IBM Cloud Enterprise Account.
 
-## Features
-
-- Creates custom IAM roles for profile-template management.
-- Deploys 3 trusted profiles:
-  - General App Configuration
-  - App Configuration with Enterprise-level permissions
-  - SCC-WP for App Configuration access
-- Sets up trust relationships with App Config and SCC-WP CRNs.
-- Defines reusable IAM policy templates and applies them using a trusted profile template.
-- Automatically assigns the template to all child accounts or to specific account groups.
-
-## Prerequisites
-
-- App Configuration and SCC-WP instances must exist.
-- The CRNs of these services should be passed as variables.
-
-## Usage
-
-```hcl
-module "trusted_profile_app_config_general" {
-  source                      = "../.."
-  trusted_profile_name        = "app-config-general-profile-${var.suffix}"
-  trusted_profile_description = "Trusted Profile for App Config general permissions"
-  ...
-}
-
-module "trusted_profile_template" {
-  source              = "../../modules/trusted-profile-template"
-  profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
-  profile_description = "Template profile used to onboard child accounts"
-  ...
-}
-```
-
-## Inputs
-
-| Name                  | Description                                                   | Type    | Default                 |
-|-----------------------|---------------------------------------------------------------|---------|-------------------------|
-| `suffix`              | Random suffix for naming resources                            | string  | `"basic-trusted-profile"` |
-| `region`              | IBM Cloud region                                              | string  | `"eu-de"`               |
-| `ibmcloud_api_key`    | IBM Cloud API Key                                             | string  | n/a                     |
-| `app_config_crn`      | CRN of the App Configuration instance                         | string  | n/a                     |
-| `scc_wp_crn`          | CRN of the SCC-WP instance                                    | string  | n/a                     |
-| `onboard_account_groups` | Whether to onboard all enterprise account groups            | bool    | `true`                 |
-| `account_group_ids`   | List of specific account group IDs to onboard                 | list    | `[]`                    |
-
-## Notes
-
-- The trusted profile template is assigned by default to all account groups.
-- Policy templates for identity and platform services are created and linked dynamically.
+This example demonstrates how to deploy and configure IAM Trusted Profiles and templates with App Configuration and SCC Workload Protection (SCC-WP).
 
 ---
 
+## Components Deployed
+
+- IBM Cloud App Configuration
+- IBM Cloud Security and Compliance Center - Workload Protection (SCC-WP)
+- Custom IAM Role: `TemplateAssignmentReader`
+- Three Trusted Profiles:
+  - App Config - General (read access)
+  - App Config - Enterprise (template permissions)
+  - SCC-WP Profile (access to App Config and enterprise services)
+- Trust Relationships (via the `trusted-profile-instance` submodule)
+- Trusted Profile Template with policy templates
+- Template assignment to all account groups
+
+---
+
+## Trust Link Note
+
+Each trusted profile uses the `trusted_profile_links` block to link to a CRN (App Config or SCC-WP), enabling the identity to assume the trusted profile.
+
+---
+
+## Requirements
+
+| Name       | Version             |
+|------------|---------------------|
+| Terraform  | >= 1.3.0            |
+| IBM Cloud Provider | >= 1.76.1, < 2.0.0 |
+
+---
+
+```bash
+terraform init
+terraform apply
+```
+
+---
 

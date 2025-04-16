@@ -241,10 +241,12 @@ resource "ibm_iam_trusted_profile_link" "link" {
 }
 
 resource "ibm_iam_trusted_profile_identity" "trust_identity" {
-  count      = var.create_trusted_relationship ? 1 : 0
-  profile_id = ibm_iam_trusted_profile.profile.id
+  count         = var.trusted_profile_identity == null ? 0 : 1
+  profile_id    = ibm_iam_trusted_profile.profile.id
   identifier    = var.trusted_profile_identity.identifier
   identity_type = var.trusted_profile_identity.identity_type
   type          = var.trusted_profile_identity.type
+  accounts      = var.trusted_profile_identity.type == "user" && contains(keys(var.trusted_profile_identity), "accounts") ? var.trusted_profile_identity.accounts : null
+  description   = try(var.trusted_profile_identity.description, null)
 }
 

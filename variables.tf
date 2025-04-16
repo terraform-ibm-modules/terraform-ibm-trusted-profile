@@ -3,8 +3,8 @@
 ########################################################################################################################
 
 variable "custom_role_name" {
-  description = "Optional custom role to include in profile policies"
   type        = string
+  description = "Optional custom role to include in profile policies"
   default     = null
 }
 
@@ -19,22 +19,35 @@ variable "trusted_profile_description" {
   default     = null
 }
 
-variable "create_trusted_relationship" {
-  description = "Whether to create a trusted profile identity (trust relationship)."
-  type        = bool
-  default     = false
-}
-
 variable "trusted_profile_identity" {
-  description = "The identity to trust (required if create_trusted_relationship is true)"
+  description = "The identity to trust (use only if needed)"
   type = object({
     identifier    = string
     identity_type = string
     type          = string
+    accounts      = optional(list(string))
+    description   = optional(string)
   })
   default = null
-}
 
+  validation {
+    condition     = var.trusted_profile_identity == null || contains(["user", "serviceid", "crn"], var.trusted_profile_identity.type)
+    error_message = "The 'type' value must be one of: 'user', 'serviceid', or 'crn'."
+  }
+
+  validation {
+    condition     = var.trusted_profile_identity == null || contains(["user", "serviceid", "crn"], var.trusted_profile_identity.identity_type)
+    error_message = "The 'identity_type' value must be one of: 'user', 'serviceid', or 'crn'."
+  }
+
+  validation {
+    condition = (
+      var.trusted_profile_identity == null ||
+      !(var.trusted_profile_identity.type == "user" && can(var.trusted_profile_identity.accounts) && var.trusted_profile_identity.accounts == null)
+    )
+    error_message = "If 'type' is 'user' and 'accounts' is set, it must be a non-null list of account IDs."
+  }
+}
 
 variable "trusted_profile_policies" {
   type = list(object({

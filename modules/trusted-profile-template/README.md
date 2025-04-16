@@ -2,25 +2,62 @@
 
 This Terraform submodule provisions a Trusted Profile Template in IBM Cloud IAM. It allows you to define reusable IAM policies and associate them with a trusted profile. The template can be applied across all accounts in an enterprise, simplifying identity and access management at scale.
 
-## Purpose
+---
 
-Use this module to create a trusted profile template and assign it to all enterprise accounts or specific account groups. The module also provisions IAM policy templates that define the roles and services accessible via the trusted profile.
+## Requirements
 
-## Features
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 1.3.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement_ibm) | >= 1.76.1, < 2.0.0 |
 
-- Creates IAM policy templates with access roles.
-- Defines a Trusted Profile Template with identity linking.
-- Assigns the profile template to all child accounts in an enterprise.
-- Dynamically references policy templates from the profile template.
+---
+
+## Resources
+
+- `ibm_iam_policy_template`
+- `ibm_iam_trusted_profile_template`
+- `ibm_iam_trusted_profile_template_assignment`
+
+---
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| `template_name` | Name of the trusted profile template | `string` | n/a | yes |
+| `template_description` | Description of the trusted profile template | `string` | n/a | yes |
+| `profile_name` | Name of the trusted profile inside the template | `string` | n/a | yes |
+| `profile_description` | Description of the trusted profile | `string` | `null` | no |
+| `identity_crn` | CRN of the identity to bind (e.g., App Config CRN) | `string` | n/a | yes |
+| `onboard_account_groups` | Whether to assign to all account groups | `bool` | `false` | no |
+| `policy_templates` | List of IAM policy templates to define | `list(object({ name = string, description = string, roles = list(string), service = string }))` | n/a | yes |
+
+---
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| `trusted_profile_template_id` | ID of the created trusted profile template |
+| `trusted_profile_template_version` | Version of the created template |
+| `trusted_profile_template_assignment_ids` | Assigned target IDs (accounts or groups) |
+
+---
 
 ## Example Usage
 
 ```hcl
 module "trusted_profile_template" {
-  source              = "../../modules/trusted-profile-template"
-  profile_name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
-  profile_description = "Template profile used to onboard child accounts"
-  identity_crn        = var.app_config_crn
+  source  = "terraform-ibm-modules/trusted-profile/ibm//modules/trusted-profile-template"
+  version = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
+
+  template_name          = "Trusted Profile Template for SCC-WP"
+  template_description   = "IAM trusted profile template to onboard accounts for CSPM"
+  profile_name           = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
+  profile_description    = "Template profile used to onboard child accounts"
+  identity_crn           = var.app_config_crn
+  onboard_account_groups = true
 
   policy_templates = [
     {
@@ -37,36 +74,4 @@ module "trusted_profile_template" {
     }
   ]
 }
-```
-
-## Inputs
-
-| Name                  | Description                                                     | Type   | Required |
-|-----------------------|-----------------------------------------------------------------|--------|----------|
-| `profile_name`        | Name of the trusted profile                                     | string | yes      |
-| `profile_description` | Description of the trusted profile                              | string | yes      |
-| `identity_crn`        | CRN of the identity to bind (e.g. App Config instance)          | string | yes      |
-| `policy_templates`    | List of IAM policy templates to define in the template          | list   | yes      |
-
-
-## Outputs
-
-| Name                               | Description                                          |
-|------------------------------------|------------------------------------------------------|
-| `enterprise_account_ids`          | List of enterprise child account IDs                |
-| `trusted_profile_template_id_raw` | Full ID of the trusted profile template             |
-| `trusted_profile_template_version`| Version of the trusted profile template             |
-| `trusted_profile_template_assignment_ids` | Assignment target IDs (account group or account) |
-
-## Resources Created
-
-- `ibm_iam_policy_template`
-- `ibm_iam_trusted_profile_template`
-- `ibm_iam_trusted_profile_template_assignment`
-
-## Notes
-
-- You must have Enterprise account access and valid permissions to use this module.
-- Policy templates and trusted profiles must be properly configured to avoid assignment issues.
-
 

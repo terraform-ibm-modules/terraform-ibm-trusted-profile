@@ -24,8 +24,8 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
 }
 
 resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" {
-    name        = var.profile_name
-    description = var.profile_description
+    name        = var.template_name
+    description = var.template_description
 
   profile {
     name        = var.profile_name

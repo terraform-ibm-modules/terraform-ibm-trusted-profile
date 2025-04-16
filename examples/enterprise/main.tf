@@ -1,9 +1,4 @@
 
-# Generates a random suffix to ensure unique resource names
-resource "random_id" "suffix" {
-  byte_length = 4
-}
-
 # Generates a custom role
 resource "ibm_iam_custom_role" "template_assignment_reader" {
   name         = "TemplateAssignmentReader"

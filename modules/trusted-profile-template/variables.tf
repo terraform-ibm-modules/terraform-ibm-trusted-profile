@@ -1,3 +1,15 @@
+
+variable "template_name" {
+  description = "Name of the trusted profile template"
+  type        = string
+}
+
+variable "template_description" {
+  description = "Description of the trusted profile template"
+  type        = string
+}
+
+
 variable "policy_templates" {
   description = "List of IAM policy templates to create"
   type = list(object({
