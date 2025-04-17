@@ -11,4 +11,3 @@ output "trusted_profile_template_id" {
   description = "ID of the trusted profile template"
   value       = split("/", module.trusted_profile_template.trusted_profile_template_id_raw)[0]
 }
-

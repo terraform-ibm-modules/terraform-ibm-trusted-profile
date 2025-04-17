@@ -20,6 +20,8 @@ variable "policy_templates" {
   }))
 }
 
+# TODO: Add support to select which account groups to add trusted profile template to:
+#       https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/163
 variable "onboard_all_account_groups" {
   type        = bool
   default     = true
@@ -41,5 +43,3 @@ variable "identity_crn" {
   description = "CRN of the identity"
   type        = string
 }
-
-

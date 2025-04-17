@@ -26,4 +26,3 @@ output "trusted_profile_template_assignment_ids" {
   description = "The list of assignment IDs to child accounts"
   value       = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
 }
-

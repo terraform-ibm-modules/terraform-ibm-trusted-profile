@@ -4,7 +4,7 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
     pt.name => pt
   }
 
-  name = each.value.name
+  name      = each.value.name
   committed = true
 
   policy {
@@ -13,7 +13,7 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
 
     resource {
       attributes {
-        key     = "serviceType"
+        key      = "serviceType"
         value    = each.value.service
         operator = "stringEquals"
       }
@@ -24,12 +24,14 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
 }
 
 resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" {
-    name        = var.template_name
-    description = var.template_description
+  name        = var.template_name
+  description = var.template_description
 
   profile {
     name        = var.profile_name
     description = var.profile_description
+    # TODO: Add support to trusted profile template for user and serviceid types
+    # https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/165
     identities {
       type       = "crn"
       iam_id     = var.identity_crn
@@ -81,4 +83,3 @@ resource "ibm_iam_trusted_profile_template_assignment" "account_settings_templat
     command = "echo Assigned template to ${each.value.type}: ${each.value.id}"
   }
 }
-

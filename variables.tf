@@ -18,19 +18,10 @@ variable "trusted_profile_identity" {
   type = object({
     identifier    = string
     identity_type = string
-    type          = string
     accounts      = optional(list(string))
     description   = optional(string)
   })
   default = null
-
-  validation {
-    condition = (
-      var.trusted_profile_identity == null ||
-      contains(["user", "serviceid", "crn"], try(var.trusted_profile_identity.type, ""))
-    )
-    error_message = "The 'type' value must be one of: 'user', 'serviceid', or 'crn'."
-  }
 
   validation {
     condition = (
@@ -43,9 +34,9 @@ variable "trusted_profile_identity" {
   validation {
     condition = (
       var.trusted_profile_identity == null ||
-      !(try(var.trusted_profile_identity.type, "") == "user" &&
+      !(try(var.trusted_profile_identity.identity_type, "") == "user" &&
         can(var.trusted_profile_identity.accounts) &&
-        try(var.trusted_profile_identity.accounts, null) == null)
+      try(var.trusted_profile_identity.accounts, null) == null)
     )
     error_message = "If 'type' is 'user' and 'accounts' is set, it must be a non-null list of account IDs."
   }
@@ -134,4 +125,3 @@ variable "trusted_profile_links" {
 
   default = null
 }
-

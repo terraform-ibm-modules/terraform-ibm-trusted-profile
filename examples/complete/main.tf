@@ -94,4 +94,8 @@ module "trusted_profile" {
       crn = ibm_is_instance.vsi.crn
     }]
   }]
+  trusted_profile_identity = {
+    identifier    = ibm_is_instance.vsi.crn
+    identity_type = "crn"
+  }
 }
