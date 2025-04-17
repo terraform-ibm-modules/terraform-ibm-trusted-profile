@@ -15,12 +15,12 @@ module "resource_group" {
 ##############################################################################
 
 module "cos" {
-  source                     = "terraform-ibm-modules/cos/ibm"
-  version                    = "8.21.8"
-  resource_group_id          = module.resource_group.resource_group_id
-  cos_instance_name          = "${var.prefix}-cos"
-  cos_tags                   = var.resource_tags
-  create_cos_bucket          = false
+  source            = "terraform-ibm-modules/cos/ibm"
+  version           = "8.21.8"
+  resource_group_id = module.resource_group.resource_group_id
+  cos_instance_name = "${var.prefix}-cos"
+  cos_tags          = var.resource_tags
+  create_cos_bucket = false
 }
 
 ##############################################################################
@@ -28,13 +28,12 @@ module "cos" {
 ##############################################################################
 
 module "trusted_profile_template" {
-  source = "../../modules/trusted-profile-template"
+  source               = "../../modules/trusted-profile-template"
   template_name        = "${var.prefix}-template"
   template_description = "Minimal example for trusted profile template"
-  profile_name        = "${var.prefix}-profile"
-  profile_description = "Sample description"
-  identity_crn = module.cos.cos_instance_crn
-  onboard_all_account_groups = true
+  profile_name         = "${var.prefix}-profile"
+  profile_description  = "Sample description"
+  identity_crn         = module.cos.cos_instance_crn
   policy_templates = [
     {
       name        = "${var.prefix}-cos-reader-access"
@@ -43,4 +42,5 @@ module "trusted_profile_template" {
       service     = "service"
     }
   ]
+  onboard_all_account_groups = false # Set this to true to add the template to all account groups. Support for selecting specific groups is coming in https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/163
 }

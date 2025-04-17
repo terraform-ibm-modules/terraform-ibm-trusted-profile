@@ -8,8 +8,6 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
-// Use existing resource group
-const resourceGroup = "geretain-test-resources"
 const completeExampleDir = "examples/complete"
 const templateExampleDir = "examples/tp-template"
 
@@ -18,7 +16,6 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 		Testing:       t,
 		TerraformDir:  dir,
 		Prefix:        prefix,
-		ResourceGroup: resourceGroup,
 	})
 	return options
 }
