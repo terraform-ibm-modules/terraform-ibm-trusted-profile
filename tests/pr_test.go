@@ -13,9 +13,9 @@ const templateExampleDir = "examples/tp-template"
 
 func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  dir,
-		Prefix:        prefix,
+		Testing:      t,
+		TerraformDir: dir,
+		Prefix:       prefix,
 	})
 	return options
 }
