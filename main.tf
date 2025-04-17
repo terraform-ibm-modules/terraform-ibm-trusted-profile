@@ -239,3 +239,15 @@ resource "ibm_iam_trusted_profile_link" "link" {
     }
   }
 }
+
+resource "ibm_iam_trusted_profile_identity" "trust_identity" {
+  count      = var.trusted_profile_identity == null ? 0 : 1
+  profile_id = ibm_iam_trusted_profile.profile.id
+  identifier = var.trusted_profile_identity.identifier
+  # NOTE: Passing var.trusted_profile_identity.identity_type for both type and identity_type
+  # See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6158
+  identity_type = var.trusted_profile_identity.identity_type
+  type          = var.trusted_profile_identity.identity_type
+  accounts      = var.trusted_profile_identity.identity_type == "user" && contains(keys(var.trusted_profile_identity), "accounts") ? var.trusted_profile_identity.accounts : null
+  description   = try(var.trusted_profile_identity.description, null)
+}
