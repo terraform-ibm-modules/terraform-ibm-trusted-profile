@@ -34,7 +34,7 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
     # https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/165
     identities {
       type       = "crn"
-      iam_id     = var.identity_crn
+      iam_id     = "crn-${var.identity_crn}" # From IAM team -> ibmid of crn is composed with prefix crn and crn of an resource.
       identifier = var.identity_crn
     }
   }

@@ -26,12 +26,6 @@ func setupTemplateOptions(t *testing.T, prefix string, dir string) *testhelper.T
 		Testing:      t,
 		TerraformDir: dir,
 		Prefix:       prefix,
-		// Workaround for provider bug (TODO: Add issue number)
-		IgnoreUpdates: testhelper.Exemptions{
-			List: []string{
-				"module.trusted_profile_template.ibm_iam_trusted_profile_template.trusted_profile_template_instance",
-			},
-		},
 	})
 	terraformVars := map[string]interface{}{
 		"prefix": options.Prefix,
