@@ -117,48 +117,51 @@ variable "trusted_profile_claim_rules" {
   }
 
   validation {
-    condition = (
-      length([
-        for claim in var.trusted_profile_claim_rules :
-        !contains(keys(claim), "cr_type") || claim.type == "Profile-CR"
-      ]) == length(var.trusted_profile_claim_rules)
-    )
-    error_message = "If `cr_type` is provided in a claim, then type must be `Profile-CR`."
-  }
+  condition = (
+    var.trusted_profile_claim_rules == null ? true :
+    alltrue([
+      for i, claim in var.trusted_profile_claim_rules :
+      !(try(claim.cr_type != null && claim.type != "Profile-CR", false))
+    ])
+  )
+  error_message = "Field `cr_type` should only be set when `type` is `Profile-CR`."
+}
+  
+  validation {
+  condition = (
+    var.trusted_profile_claim_rules == null ? true :
+    alltrue([
+      for claim in var.trusted_profile_claim_rules :
+      claim.cr_type == null || try(contains(["VSI", "IKS_SA", "ROKS_SA"], claim.cr_type), false)
+    ])
+  )
+  error_message = "If `cr_type` is provided, it must be one of: `VSI`, `IKS_SA`, `ROKS_SA`."
+}
+
+validation {
+  condition = (
+    var.trusted_profile_claim_rules == null ? true :
+    alltrue([
+      for claim in var.trusted_profile_claim_rules :
+      (
+        !(contains(keys(claim), "expiration")) || claim.type == "Profile-SAML"
+      )
+    ])
+  )
+  error_message = "If `expiration` is provided, then `type` must be `Profile-SAML`."
+}
 
 
   validation {
-    condition = (
-      length([
-        for claim in var.trusted_profile_claim_rules :
-        !contains(keys(claim), "cr_type") || contains(["VSI", "IKS_SA", "ROKS_SA"], claim.cr_type)
-      ]) == length(var.trusted_profile_claim_rules)
-    )
-    error_message = "Value for `cr_type` must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`."
-  }
-
-
-  validation {
-    condition = (
-      length([
-        for claim in var.trusted_profile_claim_rules :
-        !contains(keys(claim), "expiration") || claim.type == "Profile-SAML"
-      ]) == length(var.trusted_profile_claim_rules)
-    )
-    error_message = "If `expiration` is provided in a claim, then type must be `Profile-SAML`."
-  }
-
-
-  validation {
-    condition = (
-      length([
-        for claim in var.trusted_profile_claim_rules :
-        !contains(keys(claim), "realm_name") || claim.type == "Profile-SAML"
-      ]) == length(var.trusted_profile_claim_rules)
-    )
-    error_message = "If `realm_name` is provided in a claim, then type must be `Profile-SAML`."
-  }
-
+  condition = (
+    var.trusted_profile_claim_rules == null ? true :
+    alltrue([
+      for claim in var.trusted_profile_claim_rules :
+      claim.realm_name == null || claim.type == "Profile-SAML"
+    ])
+  )
+  error_message = "If `realm_name` is provided, then `type` must be `Profile-SAML`."
+}
 }
 
 variable "trusted_profile_links" {
@@ -179,42 +182,40 @@ variable "trusted_profile_links" {
 
   default = []
 
-
-
   validation {
     condition = (
-      var.trusted_profile_links == null || length([
+      var.trusted_profile_links == null || alltrue([
         for link in var.trusted_profile_links :
         contains(["VSI", "IKS_SA", "ROKS_SA"], link.cr_type)
-      ]) == length(var.trusted_profile_links)
+      ])
     )
     error_message = "Each `cr_type` in `trusted_profile_links` must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`."
   }
 
-  validation {
-    condition = (
-      var.trusted_profile_links == null || length(flatten([
-        for i, link in var.trusted_profile_links : [
-          for j, obj in link.links :
-          (lookup(obj, "namespace", null) == null && link.cr_type == "VSI") || link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA"
-        ]
-        ])) == length(flatten([
-        for link in var.trusted_profile_links : link.links
-      ]))
-    )
-    error_message = "A `namespace` in `links` should only be provided if `cr_type` is `IKS_SA` or `ROKS_SA`."
-  }
+validation {
+  condition = (
+    var.trusted_profile_links == null || alltrue(flatten([
+      for link in var.trusted_profile_links : [
+        for obj in link.links :
+        (
+          (lookup(obj, "namespace", null) == null && link.cr_type == "VSI") ||
+          (link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA")
+        )
+      ]
+    ]))
+  )
+  error_message = "A `namespace` in `links` should only be provided if `cr_type` is `IKS_SA` or `ROKS_SA`."
+}
+
 
   validation {
     condition = (
-      var.trusted_profile_links == null || length(flatten([
+      var.trusted_profile_links == null || alltrue(flatten([
         for i, link in var.trusted_profile_links : [
           for j, obj in link.links :
           (lookup(obj, "name", null) == null && link.cr_type == "VSI") || link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA"
         ]
-        ])) == length(flatten([
-        for link in var.trusted_profile_links : link.links
-      ]))
+        ]))
     )
     error_message = "A `name` in `links` should only be provided if `cr_type` is `IKS_SA` or `ROKS_SA`."
   }
