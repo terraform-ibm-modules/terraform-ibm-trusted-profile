@@ -38,7 +38,7 @@ module "trusted_profile_template" {
     {
       name        = "${var.prefix}-cos-reader-access"
       description = "COS reader access"
-      roles       = ["Reader"]
+      roles       = var.service_roles
       service     = "service"
     }
   ]

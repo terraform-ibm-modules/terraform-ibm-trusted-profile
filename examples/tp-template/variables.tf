@@ -20,3 +20,9 @@ variable "resource_group" {
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
   default     = null
 }
+
+variable "service_roles" {
+  type        = list(string)
+  description = "A list of roles to apply to the trusted profile template for the sample Object Storage instance created by the example"
+  default     = ["Reader"]
+}
