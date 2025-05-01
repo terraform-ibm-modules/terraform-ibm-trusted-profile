@@ -13,7 +13,7 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
 
     resource {
       attributes {
-        key      = "serviceType"
+        key      = "serviceName"
         value    = each.value.service
         operator = "stringEquals"
       }
