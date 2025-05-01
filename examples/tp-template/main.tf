@@ -38,8 +38,8 @@ module "trusted_profile_template" {
     {
       name        = "${var.prefix}-cos-reader-access"
       description = "COS reader access"
-      roles       = ["Reader"]
-      service     = "service"
+      roles       = var.service_roles
+      service     = "cloud-object-storage"
     }
   ]
   onboard_all_account_groups = false # Set this to true to add the template to all account groups. Support for selecting specific groups is coming in https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/163
