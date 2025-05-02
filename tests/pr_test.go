@@ -26,15 +26,11 @@ func setupTemplateOptions(t *testing.T, prefix string, dir string) *testhelper.T
 		Testing:      t,
 		TerraformDir: dir,
 		Prefix:       prefix,
-		// Workaround for provider bug https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6216
-		IgnoreUpdates: testhelper.Exemptions{
-			List: []string{
-				"module.trusted_profile_template.ibm_iam_trusted_profile_template_assignment.account_settings_template_assignment_instance",
-			},
-		},
 	})
 	terraformVars := map[string]interface{}{
 		"prefix": options.Prefix,
+		// Workaround for provider bug https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6216
+		"account_group_ids_to_assign": []string{},
 	}
 	options.TerraformVars = terraformVars
 	return options
