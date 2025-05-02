@@ -16,16 +16,24 @@ variable "policy_templates" {
     name        = string
     description = string
     roles       = list(string)
-    service     = string
+    attributes = list(object({
+      key      = string
+      value    = string
+      operator = string
+    }))
   }))
 }
 
-# TODO: Add support to select which account groups to add trusted profile template to:
-#       https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/163
-variable "onboard_all_account_groups" {
-  type        = bool
-  default     = true
-  description = "Whether to onboard all account groups to the template."
+variable "account_group_ids_to_assign" {
+  type        = list(string)
+  default     = ["all"]
+  description = "A list of account group IDs to assign the template to. Support passing the string 'all' in the list to assign to all account groups."
+  nullable    = false
+
+  validation {
+    condition     = contains(var.account_group_ids_to_assign, "all") ? length(var.account_group_ids_to_assign) == 1 : true
+    error_message = "When specifying 'all' in the list, you cannot add any other values to the list"
+  }
 }
 
 variable "profile_name" {
