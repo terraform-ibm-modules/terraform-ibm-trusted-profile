@@ -51,5 +51,5 @@ module "trusted_profile_template" {
       }]
     }
   ]
-  account_group_ids_to_assign = [] # add list of enterprise account group IDs to assign the template to. Or use the syntax ["all"] to assign to all
+  account_group_ids_to_assign = ["all"]
 }

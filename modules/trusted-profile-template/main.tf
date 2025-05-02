@@ -23,6 +23,14 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
     # TODO support tags (https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/164)
     roles = each.value.roles
   }
+  # Temp workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6213
+  lifecycle {
+    replace_triggered_by = [terraform_data.iam_policy_template_replacement]
+  }
+}
+
+resource "terraform_data" "iam_policy_template_replacement" {
+  input = var.policy_templates
 }
 
 resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" {
@@ -51,6 +59,11 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   }
 
   committed = true
+
+  # Temp workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6214
+  lifecycle {
+    replace_triggered_by = [terraform_data.iam_policy_template_replacement]
+  }
 }
 
 data "ibm_enterprise_accounts" "all_accounts" {}
