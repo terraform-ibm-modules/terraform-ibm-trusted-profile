@@ -29,7 +29,7 @@ func setupTemplateOptions(t *testing.T, prefix string, dir string) *testhelper.T
 		// Workaround for provider bug https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6216
 		IgnoreUpdates: testhelper.Exemptions{
 			List: []string{
-				"module.trusted_profile_template.ibm_iam_trusted_profile_template_assignment",
+				"module.trusted_profile_template.ibm_iam_trusted_profile_template_assignment.account_settings_template_assignment_instance",
 			},
 		},
 	})
