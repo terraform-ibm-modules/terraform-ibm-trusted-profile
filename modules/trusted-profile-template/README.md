@@ -21,13 +21,26 @@ module "trusted_profile_template" {
       name        = "identity-access"
       description = "Policy template for identity services"
       roles       = ["Viewer", "Reader"]
-      service     = "service"
+      attributes = [{
+        key      = "serviceName"
+        value    = "cloud-object-storage"
+        operator = "stringEquals"
+        },
+        {
+          key      = "serviceInstance"
+          value    = "xxxXXXxxxXXXxxxXXX"
+          operator = "stringEquals"
+      }]
     },
     {
       name        = "platform-access"
       description = "Policy template for platform services"
       roles       = ["Viewer", "Service Configuration Reader"]
-      service     = "platform_service"
+      attributes  = [{
+        key      = "serviceType"
+        value    = "platform_service"
+        operator = "stringEquals"
+      }]
     }
   ]
 }
@@ -62,6 +75,7 @@ No modules.
 | [ibm_iam_policy_template.profile_template_policies](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_policy_template) | resource |
 | [ibm_iam_trusted_profile_template.trusted_profile_template_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_template) | resource |
 | [ibm_iam_trusted_profile_template_assignment.account_settings_template_assignment_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_template_assignment) | resource |
+| [terraform_data.iam_policy_template_replacement](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [ibm_enterprise_account_groups.all_groups](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/enterprise_account_groups) | data source |
 | [ibm_enterprise_accounts.all_accounts](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/enterprise_accounts) | data source |
 
@@ -69,9 +83,9 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_account_group_ids_to_assign"></a> [account\_group\_ids\_to\_assign](#input\_account\_group\_ids\_to\_assign) | A list of account group IDs to assign the template to. Support passing the string 'all' in the list to assign to all account groups. | `list(string)` | <pre>[<br/>  "all"<br/>]</pre> | no |
 | <a name="input_identity_crn"></a> [identity\_crn](#input\_identity\_crn) | CRN of the identity | `string` | n/a | yes |
-| <a name="input_onboard_all_account_groups"></a> [onboard\_all\_account\_groups](#input\_onboard\_all\_account\_groups) | Whether to onboard all account groups to the template. | `bool` | `true` | no |
-| <a name="input_policy_templates"></a> [policy\_templates](#input\_policy\_templates) | List of IAM policy templates to create | <pre>list(object({<br/>    name        = string<br/>    description = string<br/>    roles       = list(string)<br/>    service     = string<br/>  }))</pre> | n/a | yes |
+| <a name="input_policy_templates"></a> [policy\_templates](#input\_policy\_templates) | List of IAM policy templates to create | <pre>list(object({<br/>    name        = string<br/>    description = string<br/>    roles       = list(string)<br/>    attributes = list(object({<br/>      key      = string<br/>      value    = string<br/>      operator = string<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_profile_description"></a> [profile\_description](#input\_profile\_description) | Description of the trusted profile inside the template | `string` | `null` | no |
 | <a name="input_profile_name"></a> [profile\_name](#input\_profile\_name) | Name of the trusted profile inside the template | `string` | n/a | yes |
 | <a name="input_template_description"></a> [template\_description](#input\_template\_description) | Description of the trusted profile template | `string` | `null` | no |

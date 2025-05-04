@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos" {
   source            = "terraform-ibm-modules/cos/ibm"
-  version           = "8.21.8"
+  version           = "8.21.19"
   resource_group_id = module.resource_group.resource_group_id
   cos_instance_name = "${var.prefix}-cos"
   cos_tags          = var.resource_tags
@@ -39,8 +39,17 @@ module "trusted_profile_template" {
       name        = "${var.prefix}-cos-reader-access"
       description = "COS reader access"
       roles       = ["Reader"]
-      service     = "service"
+      attributes = [{
+        key      = "serviceName"
+        value    = "cloud-object-storage"
+        operator = "stringEquals"
+        },
+        {
+          key      = "serviceInstance"
+          value    = module.cos.cos_instance_guid
+          operator = "stringEquals"
+      }]
     }
   ]
-  onboard_all_account_groups = false # Set this to true to add the template to all account groups. Support for selecting specific groups is coming in https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/163
+  account_group_ids_to_assign = var.account_group_ids_to_assign
 }

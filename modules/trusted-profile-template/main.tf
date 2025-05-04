@@ -3,7 +3,6 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
     for pt in var.policy_templates :
     pt.name => pt
   }
-
   name      = each.value.name
   committed = true
 
@@ -12,15 +11,26 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
     description = each.value.description
 
     resource {
-      attributes {
-        key      = "serviceType"
-        value    = each.value.service
-        operator = "stringEquals"
+      dynamic "attributes" {
+        for_each = each.value.attributes
+        content {
+          key      = attributes.value.key
+          value    = attributes.value.value
+          operator = attributes.value.operator
+        }
       }
     }
-
+    # TODO support tags (https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/164)
     roles = each.value.roles
   }
+  # Temp workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6213
+  lifecycle {
+    replace_triggered_by = [terraform_data.iam_policy_template_replacement]
+  }
+}
+
+resource "terraform_data" "iam_policy_template_replacement" {
+  input = var.policy_templates
 }
 
 resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" {
@@ -49,6 +59,11 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   }
 
   committed = true
+
+  # Temp workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6214
+  lifecycle {
+    replace_triggered_by = [terraform_data.iam_policy_template_replacement]
+  }
 }
 
 data "ibm_enterprise_accounts" "all_accounts" {}
@@ -65,14 +80,32 @@ locals {
     }
   ]
 
-  combined_targets = {
+  compared_list = flatten(
+    [
+      for group in local.group_targets :
+      [
+        for provided_group in var.account_group_ids_to_assign :
+        provided_group if group.id == provided_group
+      ]
+    ]
+  )
+
+  all_groups = length(var.account_group_ids_to_assign) > 0 ? var.account_group_ids_to_assign[0] == "all" ? true : false : false
+  # tflint-ignore: terraform_unused_declarations
+  validate_group_ids = !local.all_groups ? length(local.compared_list) != length(var.account_group_ids_to_assign) ? tobool("Could not find all of the groups listed in the 'account_group_ids_to_assign' value. Please verify all values are correct") : true : true
+
+  combined_targets = local.all_groups ? {
     for target in local.group_targets :
     "${target.type}-${target.id}" => target
+    } : {
+    for target in local.group_targets :
+    "${target.type}-${target.id}" => target if contains(var.account_group_ids_to_assign, target.id)
   }
+
 }
 
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
-  for_each = var.onboard_all_account_groups ? local.combined_targets : {}
+  for_each = local.combined_targets
 
   template_id      = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
   template_version = ibm_iam_trusted_profile_template.trusted_profile_template_instance.version
