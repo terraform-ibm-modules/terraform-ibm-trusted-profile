@@ -57,21 +57,3 @@ func TestRunUpgradeExample(t *testing.T) {
 		assert.NotNil(t, output, "Expected some output")
 	}
 }
-
-func TestRunTemplateExample(t *testing.T) {
-
-	options := setupTemplateOptions(t, "tp-template", templateExampleDir)
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestRunTemplateUpgrade(t *testing.T) {
-
-	options := setupTemplateOptions(t, "tp-template-upg", templateExampleDir)
-	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
-}

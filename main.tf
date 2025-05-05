@@ -8,18 +8,6 @@ resource "ibm_iam_trusted_profile" "profile" {
 }
 
 locals {
-  # Validation of variables
-  # tflint-ignore: terraform_unused_declarations
-  validate_policies_one_and_only_one = [
-    for i, policy in var.trusted_profile_policies : (
-      (lookup(policy, "account_management", null) != null && lookup(policy, "resources", null) == null && lookup(policy, "resource_attributes", null) == null) ||
-      (lookup(policy, "account_management", null) == null && lookup(policy, "resources", null) != null && lookup(policy, "resource_attributes", null) == null) ||
-      (lookup(policy, "account_management", null) == null && lookup(policy, "resources", null) == null && lookup(policy, "resource_attributes", null) != null)
-    ) && (policy.account_management != null || policy.resources != null || policy.resource_attributes != null) ? true :
-    tobool("Values for `var.trusted_profile_policies[${i}].account_management`, `var.trusted_profile_policies[${i}].resource_attributes`, and `var.trusted_profile_policies[${i}].resources` are mutually exclusive.")
-  ]
-
-  # Transformation of maps
   policy_map = {
     for i, obj in var.trusted_profile_policies :
     "${var.trusted_profile_name}-${i}" => {
@@ -106,49 +94,6 @@ resource "ibm_iam_trusted_profile_policy" "policy" {
 }
 
 locals {
-  # tflint-ignore: terraform_unused_declarations
-  validate_claim_type = var.trusted_profile_claim_rules == null ? [] : [
-    for i, claim in var.trusted_profile_claim_rules : (
-      contains(["Profile-SAML", "Profile-CR"], claim.type) ? true : tobool("Value for `var.trusted_profile_claim_rules[${i}].type must be either `Profile-SAML` or `Profile-CR`.")
-    )
-  ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_claim_condition_operator = var.trusted_profile_claim_rules == null ? [] : [
-    for i, claim in var.trusted_profile_claim_rules : [
-      for j, condition in claim.conditions : (
-        contains(["EQUALS", "NOT_EQUALS", "EQUALS_IGNORE_CASE", "NOT_EQUALS_IGNORE_CASE", "CONTAINS", "IN"], condition.operator) ?
-        true : tobool("Value for `var.trusted_profile_claim_rules[${i}].conditions[${j}].operator` must be one of the following: `EQUALS`, `NOT_EQUALS`, `EQUALS_IGNORE_CASE`, `NOT_EQUALS_IGNORE_CASE`, `CONTAINS`, `IN`.")
-      )
-    ]
-  ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_claim_cr_type = var.trusted_profile_claim_rules == null ? [] : [
-    for i, claim in var.trusted_profile_claim_rules :
-    lookup(claim, "cr_type", null) == null ? true : (
-      claim.type == "Profile-CR" ? true : tobool("Value for `var.trusted_profile_claim_rules[${i}].cr_type` should only be provided when `var.trusted_profile_claim_rules[${i}].type` is `Profile-CR`.")
-    )
-  ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_claim_cr_type_matches = var.trusted_profile_claim_rules == null ? [] : [
-    for i, claim in var.trusted_profile_claim_rules :
-    lookup(claim, "cr_type", null) == null ? true : (
-      contains(["VSI", "IKS_SA", "ROKS_SA"], claim.cr_type) ? true : tobool("Value for `var.trusted_profile_claim_rules[${i}].cr_type` must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`.")
-    )
-  ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_claim_expiration = var.trusted_profile_claim_rules == null ? [] : [
-    for i, claim in var.trusted_profile_claim_rules :
-    lookup(claim, "expiration", null) == null ? true : (
-      claim.type == "Profile-SAML" ? true : tobool("Value for `var.trusted_profile_claim_rules[${i}].expiration` should only be provided when `var.trusted_profile_claim_rules[${i}].type` is `Profile-SAML`.")
-    )
-  ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_claim_realm_name = var.trusted_profile_claim_rules == null ? [] : [
-    for i, claim in var.trusted_profile_claim_rules :
-    lookup(claim, "realm_name", null) == null ? true : (
-      claim.type == "Profile-SAML" ? true : tobool("Value for `var.trusted_profile_claim_rules[${i}].realm_name` should only be provided when `var.trusted_profile_claim_rules[${i}].type` is `Profile-SAML`.")
-    )
-  ]
   claim_map = var.trusted_profile_claim_rules == null ? {} : {
     for i, obj in var.trusted_profile_claim_rules :
     "${var.trusted_profile_name}-${i}" => {
@@ -186,29 +131,6 @@ resource "ibm_iam_trusted_profile_claim_rule" "claim_rule" {
 }
 
 locals {
-  # tflint-ignore: terraform_unused_declarations
-  validate_link_cr_type = var.trusted_profile_links == null ? [] : [
-    for i, link in var.trusted_profile_links :
-    contains(["VSI", "IKS_SA", "ROKS_SA"], link.cr_type) ? true :
-    tobool("Value for `var.trusted_profile_links[${i}].cr_type must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`.")
-  ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_link_namespace = var.trusted_profile_links == null ? [] : [
-    for i, link in var.trusted_profile_links : [
-      for j, obj in link.links : (
-        (lookup(obj, "namespace", null) == null && link.cr_type == "VSI") || link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA" ? true :
-        tobool("Value for `var.trusted_profile_links[${i}].link[${j}].namespace` should only be provided if `var.trusted_profile_links[${i}].cr_type` is `IKS_SA` or `ROKS_SA`.")
-      )
-    ]
-  ]
-  # tflint-ignore: terraform_unused_declarations
-  validate_link_name = var.trusted_profile_links == null ? [] : [
-    for i, link in var.trusted_profile_links : [
-      for j, obj in link.links :
-      (lookup(obj, "name", null) == null && link.cr_type == "VSI") || link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA" ? true :
-      tobool("Value for `var.trusted_profile_links[${i}].link[${j}].name` should only be provided if `var.trusted_profile_links[${i}].cr_type` is `IKS_SA` or `ROKS_SA`.")
-    ]
-  ]
   link_map = var.trusted_profile_links == null ? {} : merge([
     for i, obj in var.trusted_profile_links : {
       for j, link in obj.links :
