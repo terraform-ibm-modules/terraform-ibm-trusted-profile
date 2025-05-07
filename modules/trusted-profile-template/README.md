@@ -9,12 +9,11 @@ module "trusted_profile_template" {
   source  = "terraform-ibm-modules/trusted-profile/ibm//modules/trusted-profile-template"
   version = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
 
-  template_name          = "Trusted Profile Template for SCC-WP"
-  template_description   = "IAM trusted profile template to onboard accounts for CSPM"
-  profile_name           = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
-  profile_description    = "Template profile used to onboard child accounts"
-  identity_crn           = var.app_config_crn
-  onboard_account_groups = true
+  template_name          = "Trusted Profile Template example"
+  template_description   = "IAM trusted profile template example"
+  profile_name           = "Trusted Profile example"
+  profile_description    = "Template profile example"
+  identity_crn           = "crn........"
 
   policy_templates = [
     {
