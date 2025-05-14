@@ -79,7 +79,7 @@ module "trusted_profile" {
   }]
 
   trusted_profile_claim_rules = [{
-    name       = var.prefix
+    name = var.prefix
     conditions = [{
       claim    = "Group"
       operator = "CONTAINS"
