@@ -79,6 +79,7 @@ module "trusted_profile" {
   }]
 
   trusted_profile_claim_rules = [{
+    name       = var.prefix
     conditions = [{
       claim    = "Group"
       operator = "CONTAINS"
@@ -89,9 +90,11 @@ module "trusted_profile" {
     cr_type = "VSI"
   }]
   trusted_profile_links = [{
+    name    = var.prefix
     cr_type = "VSI"
     links = [{
-      crn = ibm_is_instance.vsi.crn
+      name = var.prefix
+      crn  = ibm_is_instance.vsi.crn
     }]
   }]
   trusted_profile_identity = {
