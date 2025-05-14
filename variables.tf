@@ -83,7 +83,6 @@ variable "trusted_profile_policies" {
   }))
   description = "A list of Trusted Profile Policy objects that are applied to the Trusted Profile created by the module."
 
-
   validation {
     condition = alltrue([
       for i, policy in var.trusted_profile_policies : (
@@ -96,8 +95,6 @@ variable "trusted_profile_policies" {
     ])
     error_message = "Each trusted_profile_policy must have exactly one of `account_management`, `resources`, or `resource_attributes` set and non-null. These are mutually exclusive."
   }
-
-
 }
 
 variable "trusted_profile_claim_rules" {
