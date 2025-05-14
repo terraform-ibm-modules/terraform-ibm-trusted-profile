@@ -65,12 +65,14 @@ module "trusted_profile" {
   trusted_profile_description = "Example Trusted Profile"
 
   trusted_profile_policies = [{
+    name  = "Policy-1"
     roles = ["Reader", "Viewer"]
     resources = [{
       resource_group_id = module.resource_group.resource_group_id
       service           = "kms"
     }]
     }, {
+    name  = "Policy-2"
     roles = ["Viewer"]
     resources = [{
       resource      = module.resource_group.resource_group_id
@@ -79,6 +81,7 @@ module "trusted_profile" {
   }]
 
   trusted_profile_claim_rules = [{
+    name = "Group-rule"
     conditions = [{
       claim    = "Group"
       operator = "CONTAINS"
@@ -89,6 +92,7 @@ module "trusted_profile" {
     cr_type = "VSI"
   }]
   trusted_profile_links = [{
+    name    = "Test-link"
     cr_type = "VSI"
     links = [{
       crn = ibm_is_instance.vsi.crn
