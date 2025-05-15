@@ -50,6 +50,7 @@ variable "trusted_profile_policies" {
     description        = optional(string)
 
     resources = optional(list(object({
+      name                 = string
       service              = optional(string)
       service_type         = optional(string)
       resource_instance_id = optional(string)
@@ -74,6 +75,7 @@ variable "trusted_profile_policies" {
     })))
 
     rule_conditions = optional(list(object({
+      name     = string
       key      = string
       operator = string
       value    = list(any)
@@ -101,6 +103,50 @@ variable "trusted_profile_policies" {
     condition     = length(var.trusted_profile_policies[*].name) == length(distinct(var.trusted_profile_policies[*].name))
     error_message = "Each `name` must be unique in `trusted_profile_policies`."
   }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.resources == null || (
+          length([for r in coalesce(policy.resources, []) : r.name]) == length(distinct([for r in coalesce(policy.resources, []) : r.name]))
+        )
+      )
+    ])
+    error_message = "Each `name` in `resources` within a policy must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.resource_attributes == null || (
+          length([for r in coalesce(policy.resource_attributes, []) : r.name]) == length(distinct([for r in coalesce(policy.resource_attributes, []) : r.name]))
+        )
+      )
+    ])
+    error_message = "Each `name` in `resource_attributes` within a policy must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.resource_tags == null || (
+          length([for r in coalesce(policy.resource_tags, []) : r.name]) == length(distinct([for r in coalesce(policy.resource_tags, []) : r.name]))
+        )
+      )
+    ])
+    error_message = "Each `name` in `resource_tags` within a policy must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.rule_conditions == null || (
+          length([for r in coalesce(policy.rule_conditions, []) : r.name]) == length(distinct([for r in coalesce(policy.rule_conditions, []) : r.name]))
+        )
+      )
+    ])
+    error_message = "Each `name` in `rule_conditions` within a policy must be unique."
+  }
 }
 
 variable "trusted_profile_claim_rules" {
@@ -108,6 +154,7 @@ variable "trusted_profile_claim_rules" {
     # required arguments
     name = string
     conditions = list(object({
+      name     = string
       claim    = string
       operator = string
       value    = string
@@ -199,6 +246,15 @@ variable "trusted_profile_claim_rules" {
     condition     = length(var.trusted_profile_claim_rules[*].name) == length(distinct(var.trusted_profile_claim_rules[*].name))
     error_message = "Each 'name' must be unique in 'trusted_profile_claim_rules'."
   }
+
+  validation {
+    condition = alltrue([
+      for rule in var.trusted_profile_claim_rules : (
+        length([for c in rule.conditions : c.name]) == length(distinct([for c in rule.conditions : c.name]))
+      )
+    ])
+    error_message = "Each 'name' in 'conditions' within a claim rule must be unique."
+  }
 }
 
 variable "trusted_profile_links" {
@@ -207,9 +263,9 @@ variable "trusted_profile_links" {
     name    = string
     cr_type = string
     links = list(object({
+      name      = string
       crn       = string
       namespace = optional(string)
-      name      = optional(string)
     }))
   }))
 
@@ -245,5 +301,14 @@ variable "trusted_profile_links" {
   validation {
     condition     = length(var.trusted_profile_links[*].name) == length(distinct(var.trusted_profile_links[*].name))
     error_message = "Each 'name' must be unique in 'trusted_profile_links'."
+  }
+
+  validation {
+    condition = alltrue([
+      for tpl in var.trusted_profile_links : (
+        length([for l in tpl.links : l.name]) == length(distinct([for l in tpl.links : l.name]))
+      )
+    ])
+    error_message = "Each 'name' in 'links' within a trusted_profile_link must be unique."
   }
 }

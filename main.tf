@@ -19,22 +19,22 @@ locals {
 
       resources = lookup(obj, "resources", null) == null ? {} : {
         for j, res in obj.resources :
-        "${obj.name}-${j}-resources" => res
+        "${obj.name}-${res.name}-resources" => res
       }
 
       resource_attributes = lookup(obj, "resource_attributes", null) == null ? {} : {
         for j, res_attr in obj.resource_attributes :
-        "${obj.name}-${j}-resource-attributes" => res_attr
+        "${obj.name}-${res_attr.name}-resource-attributes" => res_attr
       }
 
       resource_tags = lookup(obj, "resource_tags", null) == null ? {} : {
         for j, res_tags in obj.resource_tags :
-        "${obj.name}-${j}-resource-tags" => res_tags
+        "${obj.name}-${res_tags.name}-resource-tags" => res_tags
       }
 
       rule_conditions = lookup(obj, "rule_conditions", null) == null ? {} : {
         for j, rule_cons in obj.rule_conditions :
-        "${obj.name}-${j}-rule-conditions" => rule_cons
+        "${obj.name}-${rule_cons.name}-rule-conditions" => rule_cons
       }
     }
   }
@@ -99,7 +99,7 @@ locals {
     obj.name => {
       conditions = {
         for j, cond in obj.conditions :
-        "${obj.name}-${j}-condition" => cond
+        "${obj.name}-${cond.name}-condition" => cond
       }
       type       = obj.type
       cr_type    = obj.cr_type
@@ -134,11 +134,11 @@ locals {
   link_map = var.trusted_profile_links == null ? {} : merge([
     for i, obj in var.trusted_profile_links : {
       for j, link in obj.links :
-      "${obj.name}-${j}" => {
+      "${obj.name}-${link.name}" => {
         cr_type = obj.cr_type
         name    = obj.name
         links = {
-          "${obj.name}-${j}-link" = link
+          "${obj.name}-${link.name}-link" = link
         }
       }
     }
