@@ -157,7 +157,9 @@ resource "ibm_iam_trusted_profile_link" "link" {
     content {
       crn       = link.value.crn
       namespace = link.value.namespace
-      name      = link.value.name
+      # A link name should only be passed if 'cr_type' is 'IKS_SA' or 'ROKS_SA',
+      # other wise provider fails with 'CreateLinkWithContext failed: Invalid property combination provided.'
+      name = each.value.cr_type == "IKS_SA" || each.value.cr_type == "ROKS_SA" ? link.value.name : null
     }
   }
 }

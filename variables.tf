@@ -84,7 +84,6 @@ variable "trusted_profile_policies" {
   }))
   description = "A list of Trusted Profile Policy objects that are applied to the Trusted Profile created by the module."
 
-
   validation {
     condition = alltrue([
       for i, policy in var.trusted_profile_policies : (
@@ -241,19 +240,6 @@ variable "trusted_profile_links" {
       ]))
     )
     error_message = "A `namespace` in `links` should only be provided if `cr_type` is `IKS_SA` or `ROKS_SA`."
-  }
-
-
-  validation {
-    condition = (
-      var.trusted_profile_links == null || alltrue(flatten([
-        for i, link in var.trusted_profile_links : [
-          for j, obj in link.links :
-          (lookup(obj, "name", null) == null && link.cr_type == "VSI") || link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA"
-        ]
-      ]))
-    )
-    error_message = "A `name` in `links` should only be provided if `cr_type` is `IKS_SA` or `ROKS_SA`."
   }
 
   validation {

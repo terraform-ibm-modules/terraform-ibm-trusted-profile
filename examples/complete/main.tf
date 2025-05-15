@@ -64,24 +64,70 @@ module "trusted_profile" {
   trusted_profile_name        = "${var.prefix}-profile"
   trusted_profile_description = "Example Trusted Profile"
 
-  trusted_profile_policies = [{
-    name  = "Policy-1"
-    roles = ["Reader", "Viewer"]
-    resources = [{
-      resource_group_id = module.resource_group.resource_group_id
-      service           = "kms"
-    }]
-    }, {
-    name  = "Policy-2"
-    roles = ["Viewer"]
-    resources = [{
-      resource      = module.resource_group.resource_group_id
-      resource_type = "resource-group"
-    }]
-  }]
+  trusted_profile_policies = [
+    # example of policy with Viewer access to the given resource group
+    {
+      name  = "${var.prefix}-profile-0"
+      roles = ["Viewer"]
+      resources = [{
+        resource      = module.resource_group.resource_group_id
+        resource_type = "resource-group"
+      }]
+    },
+    # example of policy using service_group_id resource attribute
+    {
+      name  = "${var.prefix}-profile-1"
+      roles = ["Service ID creator", "User API key creator", "Administrator"]
+      resource_attributes = [{
+        name     = "service_group_id"
+        value    = "IAM"
+        operator = "stringEquals"
+      }]
+    },
+    # example of policy with Viewer access to the KMS service in the given resource group using rule conditions
+    {
+      name  = "${var.prefix}-profile-2"
+      roles = ["Viewer"]
+      resources = [{
+        resource_group_id = module.resource_group.resource_group_id
+        service           = "kms"
+      }]
+      rule_conditions = [
+        {
+          key      = "{{environment.attributes.day_of_week}}"
+          operator = "dayOfWeekAnyOf"
+          value    = ["1+00:00", "2+00:00", "3+00:00", "4+00:00"]
+        },
+        {
+          key      = "{{environment.attributes.current_time}}"
+          operator = "timeLessThanOrEquals"
+          value    = ["17:00:00+00:00"]
+        }
+      ]
+      rule_operator = "or"
+      pattern       = "attribute-based-condition:resource:literal-and-wildcard"
+    },
+    # example of policy for all Identity and Access enabled services using resource_tags
+    # NOTE: The code is commented out as it will fail if a policy already exists in an account with the same attributes
+
+    # {
+    #   roles       = ["Viewer"]
+    #   description = "IAM Trusted Profile Policy"
+    #   resource_attributes = [{
+    #     name     = "serviceType"
+    #     value    = "service"
+    #     operator = "stringEquals"
+    #   }]
+    #   # resource_tags are only allowed in policy with resource attribute serviceType, where value is equal to service
+    #   resource_tags = [{
+    #     name = "env"
+    #     value = "dev"
+    #   }]
+    # }
+  ]
 
   trusted_profile_claim_rules = [{
-    name = "Group-rule"
+    name = var.prefix
     conditions = [{
       claim    = "Group"
       operator = "CONTAINS"
@@ -91,13 +137,16 @@ module "trusted_profile" {
     type    = "Profile-CR"
     cr_type = "VSI"
   }]
+
   trusted_profile_links = [{
-    name    = "Test-link"
+    name    = var.prefix
     cr_type = "VSI"
     links = [{
-      crn = ibm_is_instance.vsi.crn
+      name = var.prefix
+      crn  = ibm_is_instance.vsi.crn
     }]
   }]
+
   trusted_profile_identity = {
     identifier    = ibm_is_instance.vsi.crn
     identity_type = "crn"
