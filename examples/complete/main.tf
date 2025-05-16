@@ -124,7 +124,7 @@ module "trusted_profile" {
   ]
 
   trusted_profile_claim_rules = [{
-    name = var.prefix
+    name = "${var.prefix}-profile-0"
     conditions = [{
       claim    = "Group"
       operator = "CONTAINS"
@@ -136,7 +136,7 @@ module "trusted_profile" {
   }]
 
   trusted_profile_links = [{
-    name    = var.prefix
+    name    = "${var.prefix}-profile-0"
     cr_type = "VSI"
     links = [{
       name = var.prefix
