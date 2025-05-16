@@ -19,22 +19,22 @@ locals {
 
       resources = lookup(obj, "resources", null) == null ? {} : {
         for j, res in obj.resources :
-        "${obj.unique_identifier}-${res.unique_identifier}-resources" => res
+        "${obj.unique_identifier}-${j}-resources" => res
       }
 
       resource_attributes = lookup(obj, "resource_attributes", null) == null ? {} : {
         for j, res_attr in obj.resource_attributes :
-        "${obj.unique_identifier}-${res_attr.unique_identifier}-resource-attributes" => res_attr
+        "${obj.unique_identifier}-${j}-resource-attributes" => res_attr
       }
 
       resource_tags = lookup(obj, "resource_tags", null) == null ? {} : {
         for j, res_tags in obj.resource_tags :
-        "${obj.unique_identifier}-${res_tags.unique_identifier}-resource-tags" => res_tags
+        "${obj.unique_identifier}-${j}-resource-tags" => res_tags
       }
 
       rule_conditions = lookup(obj, "rule_conditions", null) == null ? {} : {
         for j, rule_cons in obj.rule_conditions :
-        "${obj.unique_identifier}-${rule_cons.unique_identifier}--rule-conditions" => rule_cons
+        "${obj.unique_identifier}-${j}-rule-conditions" => rule_cons
       }
     }
   }
@@ -99,7 +99,7 @@ locals {
     obj.unique_identifier => {
       conditions = {
         for j, cond in obj.conditions :
-        "${obj.unique_identifier}-${cond.unique_identifier}-condition" => cond
+        "${obj.unique_identifier}-${j}-condition" => cond
       }
       type       = obj.type
       cr_type    = obj.cr_type
@@ -134,11 +134,11 @@ locals {
   link_map = var.trusted_profile_links == null ? {} : merge([
     for i, obj in var.trusted_profile_links : {
       for j, link in obj.links :
-      "${obj.unique_identifier}-${link.unique_identifier}" => {
+      "${obj.unique_identifier}-${j}" => {
         cr_type = obj.cr_type
         name    = obj.name
         links = {
-          "${obj.unique_identifier}-${link.unique_identifier}-link" = link
+          "${obj.unique_identifier}-${j}-link" = link
         }
       }
     }
