@@ -145,7 +145,7 @@ module "trusted_profile" {
   }]
 
   trusted_profile_links = [{
-    unique_identifier = "${local.trusted_profile_name}-0-0"
+    unique_identifier = "${local.trusted_profile_name}-0"
     name              = var.prefix
     cr_type           = "VSI"
     links = [{
