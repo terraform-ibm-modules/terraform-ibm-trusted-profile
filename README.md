@@ -46,14 +46,17 @@ module "trusted_profile {
   trusted_profile_description = "Example Trusted Profile"
 
   trusted_profile_policies = [{
-    roles = ["Reader", "Viewer"]
+    unique_identifier = "kms-reader-viewer"
+    roles             = ["Reader", "Viewer"]
     resources = [{
       service           = "kms"
     }]
   }]
 
   trusted_profile_claim_rules = [{
+    unique_identifier = "my-claim-rule"
     conditions = [{
+      unique_identifier = "admin-condition"
       claim    = "Group"
       operator = "CONTAINS"
       value    = "\"Admin\""
@@ -64,8 +67,10 @@ module "trusted_profile {
   }]
 
   trusted_profile_links = [{
+    unique_identifier = "vsi"
     cr_type = "VSI"
     links = [{
+      unique_identifier = "my-vsi"
       crn = ibm_is_instance.vsi.crn # Existing Infrastructure CRN
     }]
   }]
