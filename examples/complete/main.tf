@@ -59,46 +59,58 @@ resource "ibm_is_instance" "vsi" {
   keys = [ibm_is_ssh_key.public_key.id]
 }
 
+locals {
+  trusted_profile_name = "${var.prefix}-profile"
+}
+
 module "trusted_profile" {
   source                      = "../.."
-  trusted_profile_name        = "${var.prefix}-profile"
+  trusted_profile_name        = local.trusted_profile_name
   trusted_profile_description = "Example Trusted Profile"
 
   trusted_profile_policies = [
     # example of policy with Viewer access to the given resource group
     {
-      roles = ["Viewer"]
+      unique_identifier = "${local.trusted_profile_name}-0"
+      roles             = ["Viewer"]
       resources = [{
-        resource      = module.resource_group.resource_group_id
-        resource_type = "resource-group"
+        unique_identifier = "${local.trusted_profile_name}-0-resources"
+        resource          = module.resource_group.resource_group_id
+        resource_type     = "resource-group"
       }]
     },
     # example of policy using service_group_id resource attribute
     {
-      roles = ["Service ID creator", "User API key creator", "Administrator"]
+      unique_identifier = "${local.trusted_profile_name}-1"
+      roles             = ["Service ID creator", "User API key creator", "Administrator"]
       resource_attributes = [{
-        name     = "service_group_id"
-        value    = "IAM"
-        operator = "stringEquals"
+        unique_identifier = "${local.trusted_profile_name}-0-resource-attributes"
+        name              = "service_group_id"
+        value             = "IAM"
+        operator          = "stringEquals"
       }]
     },
     # example of policy with Viewer access to the KMS service in the given resource group using rule conditions
     {
-      roles = ["Viewer"]
+      unique_identifier = "${local.trusted_profile_name}-2"
+      roles             = ["Viewer"]
       resources = [{
+        unique_identifier = "${local.trusted_profile_name}-0-resources"
         resource_group_id = module.resource_group.resource_group_id
         service           = "kms"
       }]
       rule_conditions = [
         {
-          key      = "{{environment.attributes.day_of_week}}"
-          operator = "dayOfWeekAnyOf"
-          value    = ["1+00:00", "2+00:00", "3+00:00", "4+00:00"]
+          unique_identifier = "${local.trusted_profile_name}-0-rule-conditions"
+          key               = "{{environment.attributes.day_of_week}}"
+          operator          = "dayOfWeekAnyOf"
+          value             = ["1+00:00", "2+00:00", "3+00:00", "4+00:00"]
         },
         {
-          key      = "{{environment.attributes.current_time}}"
-          operator = "timeLessThanOrEquals"
-          value    = ["17:00:00+00:00"]
+          unique_identifier = "${local.trusted_profile_name}-1-rule-conditions"
+          key               = "{{environment.attributes.current_time}}"
+          operator          = "timeLessThanOrEquals"
+          value             = ["17:00:00+00:00"]
         }
       ]
       rule_operator = "or"
@@ -108,27 +120,32 @@ module "trusted_profile" {
     # NOTE: The code is commented out as it will fail if a policy already exists in an account with the same attributes
 
     # {
-    #   roles       = ["Viewer"]
-    #   description = "IAM Trusted Profile Policy"
+    #   unique_identifier   = "${local.trusted_profile_name}-2"
+    #   roles               = ["Viewer"]
+    #   description         = "IAM Trusted Profile Policy"
     #   resource_attributes = [{
-    #     name     = "serviceType"
-    #     value    = "service"
-    #     operator = "stringEquals"
+    #     unique_identifier = "${local.trusted_profile_name}-0-resource-attributes"
+    #     name              = "serviceType"
+    #     value             = "service"
+    #     operator          = "stringEquals"
     #   }]
     #   # resource_tags are only allowed in policy with resource attribute serviceType, where value is equal to service
     #   resource_tags = [{
-    #     name = "env"
-    #     value = "dev"
+    #     unique_identifier = "${local.trusted_profile_name}-0-resource-tags"
+    #     name              = "env"
+    #     value             = "dev"
     #   }]
     # }
   ]
 
   trusted_profile_claim_rules = [{
-    name = var.prefix
+    unique_identifier = "${local.trusted_profile_name}-0"
+    name              = var.prefix
     conditions = [{
-      claim    = "Group"
-      operator = "CONTAINS"
-      value    = "\"Admin\""
+      unique_identifier = "${local.trusted_profile_name}-0-condition"
+      claim             = "Group"
+      operator          = "CONTAINS"
+      value             = "\"Admin\""
     }]
 
     type    = "Profile-CR"
@@ -136,11 +153,13 @@ module "trusted_profile" {
   }]
 
   trusted_profile_links = [{
-    name    = var.prefix
-    cr_type = "VSI"
+    unique_identifier = "${local.trusted_profile_name}-0-0"
+    name              = var.prefix
+    cr_type           = "VSI"
     links = [{
-      name = var.prefix
-      crn  = ibm_is_instance.vsi.crn
+      unique_identifier = "${local.trusted_profile_name}-0-link"
+      name              = var.prefix
+      crn               = ibm_is_instance.vsi.crn
     }]
   }]
 

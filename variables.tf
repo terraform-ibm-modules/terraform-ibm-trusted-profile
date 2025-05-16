@@ -44,11 +44,13 @@ variable "trusted_profile_identity" {
 
 variable "trusted_profile_policies" {
   type = list(object({
+    unique_identifier  = string
     roles              = list(string)
     account_management = optional(bool)
     description        = optional(string)
 
     resources = optional(list(object({
+      unique_identifier    = string
       service              = optional(string)
       service_type         = optional(string)
       resource_instance_id = optional(string)
@@ -61,27 +63,30 @@ variable "trusted_profile_policies" {
     })), null)
 
     resource_attributes = optional(list(object({
-      name     = string
-      value    = string
-      operator = optional(string)
+      unique_identifier = string
+      name              = string
+      value             = string
+      operator          = optional(string)
     })))
 
     resource_tags = optional(list(object({
-      name     = string
-      value    = string
-      operator = optional(string)
+      unique_identifier = string
+      name              = string
+      value             = string
+      operator          = optional(string)
     })))
 
     rule_conditions = optional(list(object({
-      key      = string
-      operator = string
-      value    = list(any)
+      unique_identifier = string
+      key               = string
+      operator          = string
+      value             = list(any)
     })))
 
     rule_operator = optional(string)
     pattern       = optional(string)
   }))
-  description = "A list of Trusted Profile Policy objects that are applied to the Trusted Profile created by the module."
+  description = "A list of Trusted Profile Policy objects that are applied to the Trusted Profile created by the module. NOTE: The `unique_identifier` attributes are only used by terraform for building map objects, it is not use for any actual resource naming. Changing this value will cause resources to be recreated."
 
   validation {
     condition = alltrue([
@@ -95,15 +100,66 @@ variable "trusted_profile_policies" {
     ])
     error_message = "Each trusted_profile_policy must have exactly one of `account_management`, `resources`, or `resource_attributes` set and non-null. These are mutually exclusive."
   }
+
+  validation {
+    condition     = length(var.trusted_profile_policies[*].unique_identifier) == length(distinct(var.trusted_profile_policies[*].unique_identifier))
+    error_message = "Each `unique_identifier` must be unique in `trusted_profile_policies`."
+  }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.resources == null || (
+          length([for r in coalesce(policy.resources, []) : r.unique_identifier]) == length(distinct([for r in coalesce(policy.resources, []) : r.unique_identifier]))
+        )
+      )
+    ])
+    error_message = "Each `unique_identifier` in `resources` within a policy must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.resource_attributes == null || (
+          length([for r in coalesce(policy.resource_attributes, []) : r.unique_identifier]) == length(distinct([for r in coalesce(policy.resource_attributes, []) : r.unique_identifier]))
+        )
+      )
+    ])
+    error_message = "Each `unique_identifier` in `resource_attributes` within a policy must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.resource_tags == null || (
+          length([for r in coalesce(policy.resource_tags, []) : r.unique_identifier]) == length(distinct([for r in coalesce(policy.resource_tags, []) : r.unique_identifier]))
+        )
+      )
+    ])
+    error_message = "Each `unique_identifier` in `resource_tags` within a policy must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for policy in var.trusted_profile_policies : (
+        policy.rule_conditions == null || (
+          length([for r in coalesce(policy.rule_conditions, []) : r.unique_identifier]) == length(distinct([for r in coalesce(policy.rule_conditions, []) : r.unique_identifier]))
+        )
+      )
+    ])
+    error_message = "Each `unique_identifier` in `rule_conditions` within a policy must be unique."
+  }
 }
 
 variable "trusted_profile_claim_rules" {
   type = list(object({
     # required arguments
+    unique_identifier = string
     conditions = list(object({
-      claim    = string
-      operator = string
-      value    = string
+      unique_identifier = string
+      claim             = string
+      operator          = string
+      value             = string
     }))
 
     type = string
@@ -188,16 +244,32 @@ variable "trusted_profile_claim_rules" {
     )
     error_message = "If `realm_name` is provided, then `type` must be `Profile-SAML`."
   }
+
+  validation {
+    condition     = length(var.trusted_profile_claim_rules[*].unique_identifier) == length(distinct(var.trusted_profile_claim_rules[*].unique_identifier))
+    error_message = "Each 'unique_identifier' must be unique in 'trusted_profile_claim_rules'."
+  }
+
+  validation {
+    condition = alltrue([
+      for rule in var.trusted_profile_claim_rules : (
+        length([for c in rule.conditions : c.unique_identifier]) == length(distinct([for c in rule.conditions : c.unique_identifier]))
+      )
+    ])
+    error_message = "Each 'unique_identifier' in 'conditions' within a claim rule must be unique."
+  }
 }
 
 variable "trusted_profile_links" {
   type = list(object({
     # required arguments
-    cr_type = string
+    unique_identifier = string
+    cr_type           = string
     links = list(object({
-      crn       = string
-      namespace = optional(string)
-      name      = optional(string)
+      unique_identifier = string
+      crn               = string
+      namespace         = optional(string)
+      name              = optional(string)
     }))
 
     # optional arguments
@@ -231,5 +303,19 @@ variable "trusted_profile_links" {
       ]))
     )
     error_message = "A `namespace` in `links` should only be provided if `cr_type` is `IKS_SA` or `ROKS_SA`."
+  }
+
+  validation {
+    condition     = length(var.trusted_profile_links[*].unique_identifier) == length(distinct(var.trusted_profile_links[*].unique_identifier))
+    error_message = "Each 'unique_identifier' must be unique in 'trusted_profile_links'."
+  }
+
+  validation {
+    condition = alltrue([
+      for tpl in var.trusted_profile_links : (
+        length([for l in tpl.links : l.unique_identifier]) == length(distinct([for l in tpl.links : l.unique_identifier]))
+      )
+    ])
+    error_message = "Each 'unique_identifier' in 'links' within a trusted_profile_link must be unique."
   }
 }
