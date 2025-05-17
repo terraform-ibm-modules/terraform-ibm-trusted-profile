@@ -67,14 +67,17 @@ module "trusted_profile" {
   trusted_profile_policies = [
     # example of policy with Viewer access to the given resource group
     {
+      name  = "${var.prefix}-profile-0"
       roles = ["Viewer"]
       resources = [{
+        name          = "0"
         resource      = module.resource_group.resource_group_id
         resource_type = "resource-group"
       }]
     },
     # example of policy using service_group_id resource attribute
     {
+      name  = "${var.prefix}-profile-1"
       roles = ["Service ID creator", "User API key creator", "Administrator"]
       resource_attributes = [{
         name     = "service_group_id"
@@ -84,18 +87,22 @@ module "trusted_profile" {
     },
     # example of policy with Viewer access to the KMS service in the given resource group using rule conditions
     {
+      name  = "${var.prefix}-profile-2"
       roles = ["Viewer"]
       resources = [{
+        name              = "0"
         resource_group_id = module.resource_group.resource_group_id
         service           = "kms"
       }]
       rule_conditions = [
         {
+          name     = "0"
           key      = "{{environment.attributes.day_of_week}}"
           operator = "dayOfWeekAnyOf"
           value    = ["1+00:00", "2+00:00", "3+00:00", "4+00:00"]
         },
         {
+          name     = "1"
           key      = "{{environment.attributes.current_time}}"
           operator = "timeLessThanOrEquals"
           value    = ["17:00:00+00:00"]
@@ -124,8 +131,9 @@ module "trusted_profile" {
   ]
 
   trusted_profile_claim_rules = [{
-    name = var.prefix
+    name = "${var.prefix}-profile-0"
     conditions = [{
+      name     = "0"
       claim    = "Group"
       operator = "CONTAINS"
       value    = "\"Admin\""
@@ -136,10 +144,10 @@ module "trusted_profile" {
   }]
 
   trusted_profile_links = [{
-    name    = var.prefix
+    name    = "${var.prefix}-profile-0"
     cr_type = "VSI"
     links = [{
-      name = var.prefix
+      name = "0"
       crn  = ibm_is_instance.vsi.crn
     }]
   }]
