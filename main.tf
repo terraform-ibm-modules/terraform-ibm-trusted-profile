@@ -10,7 +10,7 @@ resource "ibm_iam_trusted_profile" "profile" {
 locals {
   policy_map = {
     for i, obj in var.trusted_profile_policies :
-    "${var.trusted_profile_name}-${i}" => {
+    obj.unique_identifier => {
       roles              = obj.roles
       account_management = obj.account_management
       description        = obj.description
@@ -19,22 +19,22 @@ locals {
 
       resources = lookup(obj, "resources", null) == null ? {} : {
         for j, res in obj.resources :
-        "${var.trusted_profile_name}-${j}-resources" => res
+        "${obj.unique_identifier}-${j}-resources" => res
       }
 
       resource_attributes = lookup(obj, "resource_attributes", null) == null ? {} : {
         for j, res_attr in obj.resource_attributes :
-        "${var.trusted_profile_name}-${j}-resource-attributes" => res_attr
+        "${obj.unique_identifier}-${j}-resource-attributes" => res_attr
       }
 
       resource_tags = lookup(obj, "resource_tags", null) == null ? {} : {
         for j, res_tags in obj.resource_tags :
-        "${var.trusted_profile_name}-${j}-resource-tags" => res_tags
+        "${obj.unique_identifier}-${j}-resource-tags" => res_tags
       }
 
       rule_conditions = lookup(obj, "rule_conditions", null) == null ? {} : {
         for j, rule_cons in obj.rule_conditions :
-        "${var.trusted_profile_name}-${j}-rule-conditions" => rule_cons
+        "${obj.unique_identifier}-${j}-rule-conditions" => rule_cons
       }
     }
   }
@@ -96,10 +96,10 @@ resource "ibm_iam_trusted_profile_policy" "policy" {
 locals {
   claim_map = var.trusted_profile_claim_rules == null ? {} : {
     for i, obj in var.trusted_profile_claim_rules :
-    "${var.trusted_profile_name}-${i}" => {
+    obj.unique_identifier => {
       conditions = {
         for j, cond in obj.conditions :
-        "${var.trusted_profile_name}-${j}-condition" => cond
+        "${obj.unique_identifier}-${j}-condition" => cond
       }
       type       = obj.type
       cr_type    = obj.cr_type
@@ -134,11 +134,11 @@ locals {
   link_map = var.trusted_profile_links == null ? {} : merge([
     for i, obj in var.trusted_profile_links : {
       for j, link in obj.links :
-      "${var.trusted_profile_name}-${i}-${j}" => {
+      "${obj.unique_identifier}-${j}" => {
         cr_type = obj.cr_type
         name    = obj.name
         links = {
-          "${var.trusted_profile_name}-${j}-link" = link
+          "${obj.unique_identifier}-${j}-link" = link
         }
       }
     }
