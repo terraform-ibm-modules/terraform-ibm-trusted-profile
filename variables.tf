@@ -44,7 +44,7 @@ variable "trusted_profile_identity" {
 
 variable "trusted_profile_policies" {
   type = list(object({
-    name               = string
+    unique_identifier  = string
     roles              = list(string)
     account_management = optional(bool)
     description        = optional(string)
@@ -100,8 +100,8 @@ variable "trusted_profile_policies" {
   }
 
   validation {
-    condition     = length(var.trusted_profile_policies[*].name) == length(distinct(var.trusted_profile_policies[*].name))
-    error_message = "Each `name` must be unique in `trusted_profile_policies`."
+    condition     = length(var.trusted_profile_policies[*].unique_identifier) == length(distinct(var.trusted_profile_policies[*].unique_identifier))
+    error_message = "Each `unique_identifier` must be unique in `trusted_profile_policies`."
   }
 
   validation {
@@ -152,7 +152,7 @@ variable "trusted_profile_policies" {
 variable "trusted_profile_claim_rules" {
   type = list(object({
     # required arguments
-    name = string
+    unique_identifier = string
     conditions = list(object({
       name     = string
       claim    = string
@@ -165,6 +165,7 @@ variable "trusted_profile_claim_rules" {
     # optional arguments
     cr_type    = optional(string)
     expiration = optional(number)
+    name       = optional(string)
     realm_name = optional(string)
   }))
 
@@ -243,8 +244,8 @@ variable "trusted_profile_claim_rules" {
   }
 
   validation {
-    condition     = length(var.trusted_profile_claim_rules[*].name) == length(distinct(var.trusted_profile_claim_rules[*].name))
-    error_message = "Each 'name' must be unique in 'trusted_profile_claim_rules'."
+    condition     = length(var.trusted_profile_claim_rules[*].unique_identifier) == length(distinct(var.trusted_profile_claim_rules[*].unique_identifier))
+    error_message = "Each 'unique_identifier' must be unique in 'trusted_profile_claim_rules'."
   }
 
   validation {
@@ -260,13 +261,15 @@ variable "trusted_profile_claim_rules" {
 variable "trusted_profile_links" {
   type = list(object({
     # required arguments
-    name    = string
-    cr_type = string
+    unique_identifier = string
+    cr_type           = string
     links = list(object({
       name      = string
       crn       = string
       namespace = optional(string)
     }))
+    # optional arguments
+    name = optional(string)
   }))
 
   description = "A list of Trusted Profile Link objects that are applied to the Trusted Profile created by the module."
@@ -299,8 +302,8 @@ variable "trusted_profile_links" {
   }
 
   validation {
-    condition     = length(var.trusted_profile_links[*].name) == length(distinct(var.trusted_profile_links[*].name))
-    error_message = "Each 'name' must be unique in 'trusted_profile_links'."
+    condition     = length(var.trusted_profile_links[*].unique_identifier) == length(distinct(var.trusted_profile_links[*].unique_identifier))
+    error_message = "Each 'unique_identifier' must be unique in 'trusted_profile_links'."
   }
 
   validation {
