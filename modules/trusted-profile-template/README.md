@@ -73,7 +73,7 @@ No modules.
 |------|------|
 | [ibm_iam_policy_template.profile_template_policies](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_policy_template) | resource |
 | [ibm_iam_trusted_profile_template.trusted_profile_template_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_template) | resource |
-| [ibm_iam_trusted_profile_template_assignment.account_settings_template_assignment_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_template_assignment) | resource |
+| [ibm_iam_trusted_profile_template_assignment.trusted_profile_template_assignment_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_template_assignment) | resource |
 | [terraform_data.iam_policy_template_replacement](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [ibm_enterprise_account_groups.all_groups](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/enterprise_account_groups) | data source |
 | [ibm_enterprise_accounts.all_accounts](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/enterprise_accounts) | data source |
@@ -95,7 +95,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_enterprise_account_ids"></a> [enterprise\_account\_ids](#output\_enterprise\_account\_ids) | List of child enterprise account IDs |
-| <a name="output_trusted_profile_template_assignment_ids"></a> [trusted\_profile\_template\_assignment\_ids](#output\_trusted\_profile\_template\_assignment\_ids) | The list of assignment IDs to child accounts |
+| <a name="output_trusted_profile_template_assignment_ids"></a> [trusted\_profile\_template\_assignment\_ids](#output\_trusted\_profile\_template\_assignment\_ids) | List of assignment IDs to child accounts |
 | <a name="output_trusted_profile_template_id"></a> [trusted\_profile\_template\_id](#output\_trusted\_profile\_template\_id) | The ID of the trusted profile template |
 | <a name="output_trusted_profile_template_id_raw"></a> [trusted\_profile\_template\_id\_raw](#output\_trusted\_profile\_template\_id\_raw) | Full raw ID (including version) of the trusted profile template |
 | <a name="output_trusted_profile_template_version"></a> [trusted\_profile\_template\_version](#output\_trusted\_profile\_template\_version) | The version of the Trusted Profile Template |
