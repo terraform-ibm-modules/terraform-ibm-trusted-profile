@@ -9,5 +9,20 @@ output "all_enterprise_accounts" {
 
 output "trusted_profile_template_id" {
   description = "ID of the trusted profile template"
-  value       = split("/", module.trusted_profile_template.trusted_profile_template_id_raw)[0]
+  value       = module.trusted_profile_template.trusted_profile_template_id
+}
+
+output "trusted_profile_template_id_raw" {
+  description = "Full raw ID (including version) of the account settings template"
+  value       = module.trusted_profile_template.trusted_profile_template_id_raw
+}
+
+output "trusted_profile_template_version" {
+  description = "The version of the account settings Template"
+  value       = module.trusted_profile_template.trusted_profile_template_version
+}
+
+output "trusted_profile_template_assignment_ids" {
+  description = "List of assignment IDs to child accounts"
+  value       = module.trusted_profile_template.trusted_profile_template_assignment_ids
 }
