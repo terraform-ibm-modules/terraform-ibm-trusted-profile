@@ -104,7 +104,7 @@ locals {
 
 }
 
-resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
+resource "ibm_iam_trusted_profile_template_assignment" "trusted_profile_template_assignment_instance" {
   for_each = local.combined_targets
 
   template_id      = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
