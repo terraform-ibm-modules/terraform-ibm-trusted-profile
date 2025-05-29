@@ -66,7 +66,8 @@ variable "identities" {
     iam_id     = string
     identifier = string
   }))
-  default = []
+  default  = []
+  nullable = false
 
   validation {
     condition     = alltrue([for i in var.identities : contains(["crn", "user", "serviceid"], i.type)])

@@ -58,5 +58,5 @@ module "trusted_profile_template" {
     }
   ]
   account_group_ids_to_assign = var.account_group_ids_to_assign
-  account_ids_to_assign       = var.account_ids_to_assign
+  account_ids_to_assign       = []
 }
