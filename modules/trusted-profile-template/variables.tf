@@ -36,6 +36,18 @@ variable "account_group_ids_to_assign" {
   }
 }
 
+variable "account_ids_to_assign" {
+  type        = list(string)
+  default     = []
+  description = "A list of account IDs to assign the template to. Support passing the string 'all' in the list to assign to all accounts."
+  nullable    = false
+
+  validation {
+    condition     = contains(var.account_ids_to_assign, "all") ? length(var.account_ids_to_assign) == 1 : true
+    error_message = "When specifying 'all' in the list, you cannot add any other values to the list"
+  }
+}
+
 variable "profile_name" {
   description = "Name of the trusted profile inside the template"
   type        = string
@@ -47,7 +59,42 @@ variable "profile_description" {
   default     = null
 }
 
-variable "identity_crn" {
-  description = "CRN of the identity"
-  type        = string
+variable "identities" {
+  description = "List of identity blocks with type, iam_id, and identifier"
+  type = list(object({
+    type       = string
+    iam_id     = string
+    identifier = string
+  }))
+  default  = []
+  nullable = false
+
+  validation {
+    condition     = alltrue([for i in var.identities : contains(["crn", "user", "serviceid"], i.type)])
+    error_message = "Each identity must have a valid type: crn, user, or serviceid."
+  }
+
+  # From IAM team -> ibmid of crn is composed with prefix crn and crn of an resource.
+  # ibmid of serviceid is composed with prefix iam- and ServiceId
+  validation {
+    condition = alltrue([
+      for i in var.identities :
+      i.type == "user" ? can(regex("^IBMid-", i.iam_id)) :
+      i.type == "serviceid" ? can(regex("^iam-ServiceId-", i.iam_id)) :
+      i.type == "crn" ? can(regex("^crn-crn:", i.iam_id)) :
+      true
+    ])
+    error_message = "IAM ID must start with 'IBMid-' for type 'user' and 'iam-ServiceId-' for type 'serviceid' and 'crn-crn:' for type 'crn'."
+  }
+
+  validation {
+    condition = alltrue([
+      for i in var.identities :
+      i.type == "user" ? can(regex("^IBMid-", i.identifier)) :
+      i.type == "serviceid" ? can(regex("^ServiceId-", i.identifier)) :
+      i.type == "crn" ? can(regex("^crn:", i.identifier)) :
+      true
+    ])
+    error_message = "Identifier format must match the identity type: email for 'user', 'ServiceId-*' for 'serviceid', and must start with 'crn:' for 'crn'."
+  }
 }

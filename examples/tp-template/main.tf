@@ -33,7 +33,13 @@ module "trusted_profile_template" {
   template_description = "Minimal example for trusted profile template"
   profile_name         = "${var.prefix}-profile"
   profile_description  = "Sample description"
-  identity_crn         = module.cos.cos_instance_crn
+  identities = [
+    {
+      type       = "crn"
+      iam_id     = "crn-${module.cos.cos_instance_crn}"
+      identifier = module.cos.cos_instance_crn
+    }
+  ]
   policy_templates = [
     {
       name        = "${var.prefix}-cos-reader-access"
@@ -52,4 +58,5 @@ module "trusted_profile_template" {
     }
   ]
   account_group_ids_to_assign = var.account_group_ids_to_assign
+  account_ids_to_assign       = []
 }

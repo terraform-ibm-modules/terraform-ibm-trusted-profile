@@ -40,12 +40,14 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   profile {
     name        = var.profile_name
     description = var.profile_description
-    # TODO: Add support to trusted profile template for user and serviceid types
-    # https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/165
-    identities {
-      type       = "crn"
-      iam_id     = "crn-${var.identity_crn}" # From IAM team -> ibmid of crn is composed with prefix crn and crn of an resource.
-      identifier = var.identity_crn
+
+    dynamic "identities" {
+      for_each = var.identities
+      content {
+        type       = identities.value.type
+        iam_id     = identities.value.iam_id
+        identifier = identities.value.identifier
+      }
     }
   }
 
@@ -94,13 +96,41 @@ locals {
   # tflint-ignore: terraform_unused_declarations
   validate_group_ids = !local.all_groups ? length(local.compared_list) != length(var.account_group_ids_to_assign) ? tobool("Could not find all of the groups listed in the 'account_group_ids_to_assign' value. Please verify all values are correct") : true : true
 
-  combined_targets = local.all_groups ? {
+  combined_group_targets = local.all_groups ? {
     for target in local.group_targets :
     "${target.type}-${target.id}" => target
     } : {
     for target in local.group_targets :
     "${target.type}-${target.id}" => target if contains(var.account_group_ids_to_assign, target.id)
   }
+
+  account_targets = [
+    for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
+      id   = account.id
+      type = "Account"
+    }
+  ]
+
+  compared_account_list = flatten(
+    [
+      for account in local.account_targets :
+      [
+        for provided_account in var.account_ids_to_assign :
+        provided_account if account.id == provided_account
+      ]
+    ]
+  )
+  all_accounts = length(var.account_ids_to_assign) > 0 ? var.account_ids_to_assign[0] == "all" ? true : false : false
+  # tflint-ignore: terraform_unused_declarations
+  validate_account_ids = !local.all_accounts ? length(local.compared_account_list) != length(var.account_ids_to_assign) ? tobool("Could not find all of the accounts listed in the 'account_ids_to_assign' value. Please verify all values are correct") : true : true
+  combined_account_targets = local.all_accounts ? {
+    for target in local.account_targets :
+    "${target.type}-${target.id}" => target
+    } : {
+    for target in local.account_targets :
+    "${target.type}-${target.id}" => target if contains(var.account_ids_to_assign, target.id)
+  }
+  combined_targets = merge(local.combined_group_targets, local.combined_account_targets)
 
 }
 
