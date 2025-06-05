@@ -75,63 +75,47 @@ data "ibm_enterprise_account_groups" "all_groups" {
 }
 
 locals {
-  group_targets = [
+  #  These are the IDs explicitly provided to the module
+  explicit_group_ids   = var.account_group_ids_to_assign
+  explicit_account_ids = var.account_ids_to_assign
+
+  #  Determine if "all" is specified for groups
+  all_groups_specified = length(local.explicit_group_ids) > 0 && local.explicit_group_ids[0] == "all"
+
+  #  Determine if "all" is specified for accounts
+  all_accounts_specified = length(local.explicit_account_ids) > 0 && local.explicit_account_ids[0] == "all"
+
+  #  Targets for groups: either all groups from data source or explicit ones
+  group_targets_for_for_each = local.all_groups_specified ? [
     for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
       id   = group.id
       type = "AccountGroup"
     }
+    ] : [
+    for id in local.explicit_group_ids : {
+      id   = id
+      type = "AccountGroup"
+    }
   ]
 
-  compared_list = flatten(
-    [
-      for group in local.group_targets :
-      [
-        for provided_group in var.account_group_ids_to_assign :
-        provided_group if group.id == provided_group
-      ]
-    ]
-  )
-
-  all_groups = length(var.account_group_ids_to_assign) > 0 ? var.account_group_ids_to_assign[0] == "all" ? true : false : false
-  # tflint-ignore: terraform_unused_declarations
-  validate_group_ids = !local.all_groups ? length(local.compared_list) != length(var.account_group_ids_to_assign) ? tobool("Could not find all of the groups listed in the 'account_group_ids_to_assign' value. Please verify all values are correct") : true : true
-
-  combined_group_targets = local.all_groups ? {
-    for target in local.group_targets :
-    "${target.type}-${target.id}" => target
-    } : {
-    for target in local.group_targets :
-    "${target.type}-${target.id}" => target if contains(var.account_group_ids_to_assign, target.id)
-  }
-
-  account_targets = [
+  #  Targets for accounts: either all accounts from data source or explicit ones
+  account_targets_for_for_each = local.all_accounts_specified ? [
     for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
       id   = account.id
       type = "Account"
     }
+    ] : [
+    for id in local.explicit_account_ids : {
+      id   = id
+      type = "Account"
+    }
   ]
 
-  compared_account_list = flatten(
-    [
-      for account in local.account_targets :
-      [
-        for provided_account in var.account_ids_to_assign :
-        provided_account if account.id == provided_account
-      ]
-    ]
-  )
-  all_accounts = length(var.account_ids_to_assign) > 0 ? var.account_ids_to_assign[0] == "all" ? true : false : false
-  # tflint-ignore: terraform_unused_declarations
-  validate_account_ids = !local.all_accounts ? length(local.compared_account_list) != length(var.account_ids_to_assign) ? tobool("Could not find all of the accounts listed in the 'account_ids_to_assign' value. Please verify all values are correct") : true : true
-  combined_account_targets = local.all_accounts ? {
-    for target in local.account_targets :
+  #  Combine all targets into a map suitable for for_each
+  combined_targets = {
+    for target in concat(local.group_targets_for_for_each, local.account_targets_for_for_each) :
     "${target.type}-${target.id}" => target
-    } : {
-    for target in local.account_targets :
-    "${target.type}-${target.id}" => target if contains(var.account_ids_to_assign, target.id)
   }
-  combined_targets = merge(local.combined_group_targets, local.combined_account_targets)
-
 }
 
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
