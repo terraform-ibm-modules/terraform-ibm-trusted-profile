@@ -7,10 +7,10 @@ output "trusted_profile_template_id" {
   value       = split("/", ibm_iam_trusted_profile_template.trusted_profile_template_instance.id)[0]
 }
 
-output "enterprise_account_ids" {
-  description = "List of child enterprise account IDs"
-  value       = data.ibm_enterprise_accounts.all_accounts.accounts[*].id
-}
+# output "enterprise_account_ids" {
+#   description = "List of child enterprise account IDs"
+#   value       = data.ibm_enterprise_accounts.all_accounts.accounts[*].id
+# }
 
 output "trusted_profile_template_id_raw" {
   description = "Full raw ID (including version) of the trusted profile template"

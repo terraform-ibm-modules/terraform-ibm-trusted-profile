@@ -93,7 +93,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_enterprise_account_ids"></a> [enterprise\_account\_ids](#output\_enterprise\_account\_ids) | List of child enterprise account IDs |
 | <a name="output_trusted_profile_template_assignment_ids"></a> [trusted\_profile\_template\_assignment\_ids](#output\_trusted\_profile\_template\_assignment\_ids) | The list of assignment IDs to child accounts |
 | <a name="output_trusted_profile_template_id"></a> [trusted\_profile\_template\_id](#output\_trusted\_profile\_template\_id) | The ID of the trusted profile template |
 | <a name="output_trusted_profile_template_id_raw"></a> [trusted\_profile\_template\_id\_raw](#output\_trusted\_profile\_template\_id\_raw) | Full raw ID (including version) of the trusted profile template |
