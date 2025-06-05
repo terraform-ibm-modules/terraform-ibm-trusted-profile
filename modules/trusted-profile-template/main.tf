@@ -148,6 +148,6 @@ resource "ibm_iam_trusted_profile_template_assignment" "account_settings_templat
   target_type      = local.combined_targets[count.index].type
 
   provisioner "local-exec" {
-    command = "echo Assigned template to ${each.value.type}: ${each.value.id}"
+    command = "echo Assigned template to ${local.combined_targets[count.index].type}: ${local.combined_targets[count.index].id}"
   }
 }
