@@ -68,11 +68,11 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   }
 }
 
-# data "ibm_enterprise_accounts" "all_accounts" {}
+data "ibm_enterprise_accounts" "all_accounts" {}
 
-# data "ibm_enterprise_account_groups" "all_groups" {
-#   depends_on = [data.ibm_enterprise_accounts.all_accounts]
-# }
+data "ibm_enterprise_account_groups" "all_groups" {
+  depends_on = [data.ibm_enterprise_accounts.all_accounts]
+}
 
 locals {
   # These are the IDs explicitly provided to the module
