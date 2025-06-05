@@ -81,32 +81,31 @@ locals {
 
   # Determine if "all" is specified for groups
   # This correctly handles empty lists by making the condition false
-  # all_groups_specified = (
-  #   length(local.explicit_group_ids) > 0 ? local.explicit_group_ids[0] == "all" ? true : false : false
-  # )
+  all_groups_specified = (
+    length(local.explicit_group_ids) > 0 ? local.explicit_group_ids[0] == "all" ? true : false : false
+  )
 
   # Determine if "all" is specified for accounts
   # This correctly handles empty lists by making the condition false
-  # all_accounts_specified = (
-  #   length(local.explicit_account_ids) > 0 ? local.explicit_account_ids[0] == "all" ? true : false : false
-  # )
+  all_accounts_specified = (
+    length(local.explicit_account_ids) > 0 ? local.explicit_account_ids[0] == "all" ? true : false : false
+  )
 
   # Targets for groups:
   # If "all" is specified, use all groups from the data source.
   # Otherwise, if explicit_group_ids is empty, this part of the concat will be an empty list.
   # If explicit_group_ids contains specific IDs, use those.
-  # group_targets_for_for_each = local.all_groups_specified ? [
-  #   for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
-  #     id   = group.id
-  #     type = "AccountGroup"
-  #   }
-  #   ] : (
-  # Only iterate if explicit_group_ids is not empty
-  group_targets_for_for_each = (length(local.explicit_group_ids) > 0 ? [
-    for id in local.explicit_group_ids : {
-      id   = id
+  group_targets_for_for_each = local.all_groups_specified ? [
+    for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
+      id   = group.id
       type = "AccountGroup"
     }
+    ] : (
+    length(local.explicit_group_ids) > 0 ? [
+      for id in local.explicit_group_ids : {
+        id   = id
+        type = "AccountGroup"
+      }
     ] : [] # Return an empty list if explicit_group_ids is empty
   )
 
@@ -114,18 +113,17 @@ locals {
   # If "all" is specified, use all accounts from the data source.
   # Otherwise, if explicit_account_ids is empty, this part of the concat will be an empty list.
   # If explicit_account_ids contains specific IDs, use those.
-  # account_targets_for_for_each = local.all_accounts_specified ? [
-  #   for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
-  #     id   = account.id
-  #     type = "Account"
-  #   }
-  #   ] : (
-  # Only iterate if explicit_account_ids is not empty
-  account_targets_for_for_each = (length(local.explicit_account_ids) > 0 ? [
-    for id in local.explicit_account_ids : {
-      id   = id
+  account_targets_for_for_each = local.all_accounts_specified ? [
+    for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
+      id   = account.id
       type = "Account"
     }
+    ] : (
+    length(local.explicit_account_ids) > 0 ? [
+      for id in local.explicit_account_ids : {
+        id   = id
+        type = "Account"
+      }
     ] : [] # Return an empty list if explicit_account_ids is empty
   )
 
