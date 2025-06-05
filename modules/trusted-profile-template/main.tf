@@ -81,11 +81,15 @@ locals {
 
   # Determine if "all" is specified for groups
   # This correctly handles empty lists by making the condition false
-  all_groups_specified = (length(local.explicit_group_ids) > 0 && local.explicit_group_ids[0] == "all")
+  all_groups_specified = (
+    length(local.explicit_group_ids) > 0 ? local.explicit_group_ids[0] == "all" ? true : false : false
+  )
 
   # Determine if "all" is specified for accounts
   # This correctly handles empty lists by making the condition false
-  all_accounts_specified = (length(local.explicit_account_ids) > 0 && local.explicit_account_ids[0] == "all")
+  all_accounts_specified = (
+    length(local.explicit_account_ids) > 0 ? local.explicit_account_ids[0] == "all" ? true : false : false
+  )
 
   # Targets for groups:
   # If "all" is specified, use all groups from the data source.
