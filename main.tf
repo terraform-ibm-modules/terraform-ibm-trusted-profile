@@ -43,7 +43,7 @@ locals {
 resource "ibm_iam_trusted_profile_policy" "policy" {
   for_each = local.policy_map
 
-  profile_id         = ibm_iam_trusted_profile.profile.iam_id
+  iam_id             = ibm_iam_trusted_profile.profile.profile_id
   roles              = each.value.roles
   account_management = each.value.account_management
   description        = each.value.description
