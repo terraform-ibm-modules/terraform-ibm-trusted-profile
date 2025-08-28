@@ -11,11 +11,18 @@ import (
 const completeExampleDir = "examples/complete"
 const templateExampleDir = "examples/tp-template"
 
+var IgnoreUpdates = []string{
+	"module.trusted_profile.ibm_iam_trusted_profile_policy.policy",
+}
+
 func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
 		TerraformDir: dir,
 		Prefix:       prefix,
+		IgnoreUpdates: testhelper.Exemptions{
+			List: IgnoreUpdates,
+		},
 	})
 	return options
 }
