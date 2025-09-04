@@ -2,7 +2,7 @@ module github.com/terraform-ibm-modules/terraform-ibm-trusted-profile
 
 go 1.24.0
 
-toolchain go1.24.5
+toolchain <go1 class="25 0"></go1>
 
 require (
 	github.com/stretchr/testify v1.10.0
