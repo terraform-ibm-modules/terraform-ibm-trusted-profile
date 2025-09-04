@@ -23,7 +23,7 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
     # TODO support tags (https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/164)
     roles = each.value.roles
   }
-  # Temp workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6213
+  # Need to force re-create here since a template policy cannot be updated in place (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6213#issuecomment-3179425899)
   lifecycle {
     replace_triggered_by = [terraform_data.iam_policy_template_replacement]
   }
@@ -62,7 +62,7 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
 
   committed = true
 
-  # Temp workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6214
+  # Need to force re-create here since a trusted profile template cannot be updated in place (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6214#issuecomment-3246040100)
   lifecycle {
     replace_triggered_by = [terraform_data.iam_policy_template_replacement]
   }
