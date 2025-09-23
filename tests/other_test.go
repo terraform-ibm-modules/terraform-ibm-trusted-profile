@@ -30,6 +30,28 @@ func TestRunBasicExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
+func TestRunBasicExampleEufr2(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
+		Testing:      t,
+		TerraformDir: basicExampleDir,
+		Prefix:       "trusted-prof-eu-fr2",
+		Region:       "eu-fr2",
+	})
+
+	terraformVars := map[string]interface{}{
+		"prefix": options.Prefix,
+		"region": "eu-fr2",
+	}
+
+	options.TerraformVars = terraformVars
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 func TestRunTemplateExample(t *testing.T) {
 
 	options := setupTemplateOptions(t, "tp-template", templateExampleDir)
