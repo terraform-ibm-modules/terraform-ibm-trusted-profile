@@ -75,63 +75,42 @@ data "ibm_enterprise_account_groups" "all_groups" {
 }
 
 locals {
-  group_targets = [
-    for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
+  # Check if "all" is requested
+  all_groups   = length(var.account_group_ids_to_assign) > 0 ? try(var.account_group_ids_to_assign[0], "") == "all" : false
+  all_accounts = length(var.account_ids_to_assign) > 0 ? try(var.account_ids_to_assign[0], "") == "all" : false
+
+  # Account group targets (static keys to avoid for_each dependency issues)
+  group_targets = local.all_groups ? {
+    for group in data.ibm_enterprise_account_groups.all_groups.account_groups :
+    "AccountGroup-${group.id}" => {
       id   = group.id
       type = "AccountGroup"
     }
-  ]
-
-  compared_list = flatten(
-    [
-      for group in local.group_targets :
-      [
-        for provided_group in var.account_group_ids_to_assign :
-        provided_group if group.id == provided_group
-      ]
-    ]
-  )
-
-  all_groups = length(var.account_group_ids_to_assign) > 0 ? var.account_group_ids_to_assign[0] == "all" ? true : false : false
-  # tflint-ignore: terraform_unused_declarations
-  validate_group_ids = !local.all_groups ? length(local.compared_list) != length(var.account_group_ids_to_assign) ? tobool("Could not find all of the groups listed in the 'account_group_ids_to_assign' value. Please verify all values are correct") : true : true
-
-  combined_group_targets = local.all_groups ? {
-    for target in local.group_targets :
-    "${target.type}-${target.id}" => target
-    } : {
-    for target in local.group_targets :
-    "${target.type}-${target.id}" => target if contains(var.account_group_ids_to_assign, target.id)
+  } : {
+    for idx, group_id in var.account_group_ids_to_assign :
+    "AccountGroup-${idx}" => {
+      id   = group_id
+      type = "AccountGroup"
+    } if group_id != "" && group_id != "all"
   }
 
-  account_targets = [
-    for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
+  # Account targets (static keys to avoid for_each dependency issues)
+  account_targets = local.all_accounts ? {
+    for account in data.ibm_enterprise_accounts.all_accounts.accounts :
+    "Account-${account.id}" => {
       id   = account.id
       type = "Account"
     }
-  ]
-
-  compared_account_list = flatten(
-    [
-      for account in local.account_targets :
-      [
-        for provided_account in var.account_ids_to_assign :
-        provided_account if account.id == provided_account
-      ]
-    ]
-  )
-  all_accounts = length(var.account_ids_to_assign) > 0 ? var.account_ids_to_assign[0] == "all" ? true : false : false
-  # tflint-ignore: terraform_unused_declarations
-  validate_account_ids = !local.all_accounts ? length(local.compared_account_list) != length(var.account_ids_to_assign) ? tobool("Could not find all of the accounts listed in the 'account_ids_to_assign' value. Please verify all values are correct") : true : true
-  combined_account_targets = local.all_accounts ? {
-    for target in local.account_targets :
-    "${target.type}-${target.id}" => target
-    } : {
-    for target in local.account_targets :
-    "${target.type}-${target.id}" => target if contains(var.account_ids_to_assign, target.id)
+  } : {
+    for idx, account_id in var.account_ids_to_assign :
+    "Account-${idx}" => {
+      id   = account_id
+      type = "Account"
+    } if account_id != "" && account_id != "all"
   }
-  combined_targets = merge(local.combined_group_targets, local.combined_account_targets)
 
+  # Combine all targets
+  combined_targets = merge(local.group_targets, local.account_targets)
 }
 
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
