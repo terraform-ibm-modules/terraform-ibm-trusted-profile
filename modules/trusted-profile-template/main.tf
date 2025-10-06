@@ -86,7 +86,7 @@ locals {
       id   = group.id
       type = "AccountGroup"
     }
-  } : {
+    } : {
     for idx, group_id in var.account_group_ids_to_assign :
     "AccountGroup-${idx}" => {
       id   = group_id
@@ -101,7 +101,7 @@ locals {
       id   = account.id
       type = "Account"
     }
-  } : {
+    } : {
     for idx, account_id in var.account_ids_to_assign :
     "Account-${idx}" => {
       id   = account_id
