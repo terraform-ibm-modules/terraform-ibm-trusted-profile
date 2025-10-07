@@ -1,13 +1,25 @@
 # Test the actual trusted-profile-template module with dynamic account IDs
 # This will demonstrate whether the fix-profile branch resolves the for_each dependency issue
 
-# Create dynamic account IDs that are "known only after apply"
-resource "terraform_data" "enterprise_accounts" {
-  count = 2
-  input = {
-    id             = "account-${count.index + 1}-${random_id.suffix[count.index].hex}"
-    iam_service_id = "ServiceId-${random_id.suffix[count.index].hex}"
-  }
+# Use actual IBM data source like the real module does
+data "ibm_iam_account_settings" "current" {}
+
+# Create mock account data that includes computed values from the data source
+# This more accurately reproduces the for_each dependency issue
+locals {
+  mock_accounts = [
+    {
+      id             = data.ibm_iam_account_settings.current.account_id
+      name           = "current-account"
+      iam_service_id = "ServiceId-${random_id.suffix[0].hex}"
+    },
+    {
+      # This computed key pattern is what causes the original for_each bug
+      id             = "${data.ibm_iam_account_settings.current.account_id}-child-${random_id.suffix[1].hex}"
+      name           = "mock-child-account"
+      iam_service_id = "ServiceId-${random_id.suffix[1].hex}"
+    }
+  ]
 }
 
 resource "random_id" "suffix" {
@@ -26,9 +38,10 @@ module "trusted_profile_template" {
   profile_name         = "${var.prefix}-dynamic-test-profile"
   profile_description  = "Profile to test for_each dependency fix"
 
-  # Pass dynamic account IDs - this is what triggers the original bug
+  # Pass dynamic account IDs from data source - this is what triggers the original bug
+  # The for_each keys will depend on data.ibm_iam_account_settings.current.account_id
   account_ids_to_assign = [
-    for account in terraform_data.enterprise_accounts : account.output.id
+    for account in local.mock_accounts : account.id
   ]
 
   account_group_ids_to_assign = []
@@ -36,8 +49,8 @@ module "trusted_profile_template" {
   identities = [
     {
       type       = "serviceid"
-      iam_id     = terraform_data.enterprise_accounts[0].output.iam_service_id
-      identifier = replace(terraform_data.enterprise_accounts[0].output.iam_service_id, "ServiceId-", "")
+      iam_id     = local.mock_accounts[0].iam_service_id
+      identifier = replace(local.mock_accounts[0].iam_service_id, "ServiceId-", "")
     }
   ]
 
