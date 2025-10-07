@@ -82,20 +82,16 @@ func TestModuleWithDynamicAccounts(t *testing.T) {
 
 	if err != nil {
 		errorStr := err.Error()
-		// Check if this is a non-enterprise account issue
 		if strings.Contains(errorStr, "not a part of any enterprise") {
-			t.Skip("Skipping test - account is not part of an enterprise, cannot test for_each dependency with enterprise data sources")
+			t.Skip("Skipping test - requires enterprise account")
 			return
 		}
-
-		// Check for the specific for_each dependency error we're testing for
 		if strings.Contains(errorStr, "Invalid for_each argument") {
-			t.Logf("✅ CONFIRMED: for_each dependency error detected (this indicates the bug exists)")
+			t.Logf("✅ Dependency issue detected in module")
 		} else {
-			// Just show a brief message for other errors without full details
-			t.Logf("⚠️  Plan failed for infrastructure reasons (likely authentication or permissions)")
+			t.Logf("⚠️  Plan failed for other reasons")
 		}
 	} else {
-		t.Logf("✅ Plan succeeded - for_each dependency fix is working correctly")
+		t.Logf("✅ Plan succeeded - module working correctly")
 	}
 }
