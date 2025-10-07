@@ -89,7 +89,7 @@ func TestModuleWithDynamicAccounts(t *testing.T) {
 		if strings.Contains(errorStr, "Invalid for_each argument") {
 			t.Logf("✅ Dependency issue detected in module")
 		} else {
-			t.Logf("⚠️  Plan failed for other reasons")
+			t.Logf("⚠️ Plan failed for other reasons")
 		}
 	} else {
 		t.Logf("✅ Plan succeeded - module working correctly")
