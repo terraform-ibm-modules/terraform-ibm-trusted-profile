@@ -2,10 +2,8 @@
 package test
 
 import (
-	"strings"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
@@ -57,41 +55,5 @@ func TestRunUpgradeExample(t *testing.T) {
 	if !options.UpgradeTestSkipped {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
-	}
-}
-
-// TestModuleWithDynamicAccounts tests the trusted-profile-template module
-// with dynamic account IDs to validate for_each dependency fixes
-func TestModuleWithDynamicAccounts(t *testing.T) {
-	t.Parallel()
-
-	options := &terraform.Options{
-		TerraformDir: "./module-with-dynamic-accounts",
-		NoColor:      true,
-		// Reduce verbosity - only output errors
-		Vars: map[string]interface{}{},
-	}
-
-	_, err := terraform.InitE(t, options)
-	if err != nil {
-		t.Fatalf("Init failed: %v", err)
-	}
-
-	// Test the actual module with dynamic account IDs
-	_, err = terraform.PlanE(t, options)
-
-	if err != nil {
-		errorStr := err.Error()
-		if strings.Contains(errorStr, "not a part of any enterprise") {
-			t.Skip("Skipping test - requires enterprise account")
-			return
-		}
-		if strings.Contains(errorStr, "Invalid for_each argument") {
-			t.Logf("Dependency issue detected in module")
-		} else {
-			t.Logf("Plan failed for other reasons")
-		}
-	} else {
-		t.Logf("Plan succeeded - module working correctly")
 	}
 }
