@@ -237,7 +237,7 @@ variable "trusted_profile_links" {
         for link in var.trusted_profile_links : [
           for obj in link.links :
           (
-            (lookup(obj, "namespace", null) == null && link.cr_type == "VSI") ||
+            (lookup(obj, "namespace", null) == null && (link.cr_type == "VSI" || link.cr_type == "BMS")) ||
             (link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA")
           )
         ]
