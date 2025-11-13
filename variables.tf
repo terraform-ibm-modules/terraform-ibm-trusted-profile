@@ -165,10 +165,10 @@ variable "trusted_profile_claim_rules" {
       var.trusted_profile_claim_rules == null ? true :
       alltrue([
         for claim in var.trusted_profile_claim_rules :
-        claim.cr_type == null || try(contains(["VSI", "IKS_SA", "ROKS_SA"], claim.cr_type), false)
+        claim.cr_type == null || try(contains(["VSI", "IKS_SA", "ROKS_SA", "BMS"], claim.cr_type), false)
       ])
     )
-    error_message = "If `cr_type` is provided, it must be one of: `VSI`, `IKS_SA`, `ROKS_SA`."
+    error_message = "If `cr_type` is provided, it must be one of: `VSI`, `IKS_SA`, `ROKS_SA`, `BMS`."
   }
 
   validation {
@@ -225,10 +225,10 @@ variable "trusted_profile_links" {
     condition = (
       var.trusted_profile_links == null || alltrue([
         for link in var.trusted_profile_links :
-        contains(["VSI", "IKS_SA", "ROKS_SA"], link.cr_type)
+        contains(["VSI", "IKS_SA", "ROKS_SA", "BMS"], link.cr_type)
       ])
     )
-    error_message = "Each `cr_type` in `trusted_profile_links` must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`."
+    error_message = "Each `cr_type` in `trusted_profile_links` must be one of the following: `VSI`, `IKS_SA`, `ROKS_SA`, `BMS`."
   }
 
   validation {
@@ -237,7 +237,7 @@ variable "trusted_profile_links" {
         for link in var.trusted_profile_links : [
           for obj in link.links :
           (
-            (lookup(obj, "namespace", null) == null && link.cr_type == "VSI") ||
+            (lookup(obj, "namespace", null) == null && (link.cr_type == "VSI" || link.cr_type == "BMS")) ||
             (link.cr_type == "ROKS_SA" || link.cr_type == "IKS_SA")
           )
         ]
