@@ -17,9 +17,9 @@ This module creates a trusted profile, a set of policies given to the profile, a
 * [Submodules](./modules)
     * [trusted-profile-template](./modules/trusted-profile-template)
 * [Examples](./examples)
-    * [Basic example](./examples/basic)
-    * [Complete example](./examples/complete)
-    * [Trusted Profile Template example](./examples/tp-template)
+    * <div style="display: inline-block;"><a href="./examples/basic">Basic example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=tp-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/basic" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/complete">Complete example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=tp-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/complete" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/tp-template">Trusted Profile Template example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=tp-tp-template-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/tp-template" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
@@ -100,7 +100,7 @@ You will also need `Administrator` access for any service which you are creating
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.79.1, < 2.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.79.2, < 2.0.0 |
 
 ### Modules
 
