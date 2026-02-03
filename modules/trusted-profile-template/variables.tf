@@ -1,4 +1,3 @@
-
 variable "template_name" {
   description = "Name of the trusted profile template"
   type        = string
@@ -27,25 +26,15 @@ variable "policy_templates" {
 variable "account_group_ids_to_assign" {
   type        = list(string)
   default     = ["all"]
-  description = "A list of account group IDs to assign the template to. Support passing the string 'all' in the list to assign to all account groups."
+  description = "A list of account group IDs to assign the template to. Use ['all'] to assign to all account groups (requires enterprise account)."
   nullable    = false
-
-  validation {
-    condition     = !contains(var.account_group_ids_to_assign, "all") || length(var.account_group_ids_to_assign) == 1
-    error_message = "When specifying 'all' in the list, you cannot add any other values to the list"
-  }
 }
 
 variable "account_ids_to_assign" {
   type        = list(string)
   default     = []
-  description = "A list of account IDs to assign the template to. Support passing the string 'all' in the list to assign to all accounts."
+  description = "A list of account IDs to assign the template to. Use ['all'] to assign to all accounts (requires enterprise account)."
   nullable    = false
-
-  validation {
-    condition     = !contains(var.account_ids_to_assign, "all") || length(var.account_ids_to_assign) == 1
-    error_message = "When specifying 'all' in the list, you cannot add any other values to the list"
-  }
 }
 
 variable "profile_name" {

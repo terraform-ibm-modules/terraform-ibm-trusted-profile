@@ -8,8 +8,8 @@ output "trusted_profile_template_id" {
 }
 
 output "enterprise_account_ids" {
-  description = "List of child enterprise account IDs"
-  value       = data.ibm_enterprise_accounts.all_accounts.accounts[*].id
+  description = "List of child enterprise account IDs (empty when not using 'all')"
+  value       = local.all_accounts || local.all_groups ? data.ibm_enterprise_accounts.all_accounts[0].accounts[*].id : []
 }
 
 output "trusted_profile_template_id_raw" {

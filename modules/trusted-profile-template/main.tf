@@ -68,48 +68,41 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   }
 }
 
-data "ibm_enterprise_accounts" "all_accounts" {}
+# Check for "all" - only when length is exactly 1 AND value is literally "all"
+# Note: If the list contains a single computed value, length==1 is true but we can still
+# check if it's the static string "all". Computed values are never equal to "all".
+locals {
+  all_groups   = length(var.account_group_ids_to_assign) == 1 ? var.account_group_ids_to_assign[0] == "all" : false
+  all_accounts = length(var.account_ids_to_assign) == 1 ? var.account_ids_to_assign[0] == "all" : false
+}
+
+# Enterprise data sources - only needed when "all" is specified
+data "ibm_enterprise_accounts" "all_accounts" {
+  count = local.all_accounts || local.all_groups ? 1 : 0
+}
 
 data "ibm_enterprise_account_groups" "all_groups" {
-  depends_on = [data.ibm_enterprise_accounts.all_accounts]
+  count = local.all_groups ? 1 : 0
 }
 
 locals {
-  # Check if "all" is requested
-  all_groups   = length(var.account_group_ids_to_assign) > 0 ? try(var.account_group_ids_to_assign[0], "") == "all" : false
-  all_accounts = length(var.account_ids_to_assign) > 0 ? try(var.account_ids_to_assign[0], "") == "all" : false
-
-  # Account group targets (static keys to avoid for_each dependency issues)
+  # Build targets using index-based keys for specific IDs (fixes for_each with computed values)
   group_targets = local.all_groups ? {
-    for group in data.ibm_enterprise_account_groups.all_groups.account_groups :
-    "AccountGroup-${group.id}" => {
-      id   = group.id
-      type = "AccountGroup"
-    }
+    for group in data.ibm_enterprise_account_groups.all_groups[0].account_groups :
+    "AccountGroup-${group.id}" => { id = group.id, type = "AccountGroup" }
     } : {
-    for group_id in toset(var.account_group_ids_to_assign) :
-    "AccountGroup-${group_id}" => {
-      id   = group_id
-      type = "AccountGroup"
-    } if group_id != "" && group_id != "all"
+    for idx, id in var.account_group_ids_to_assign :
+    "AccountGroup-${idx}" => { id = id, type = "AccountGroup" }
   }
 
-  # Account targets (static keys to avoid for_each dependency issues)
   account_targets = local.all_accounts ? {
-    for account in data.ibm_enterprise_accounts.all_accounts.accounts :
-    "Account-${account.id}" => {
-      id   = account.id
-      type = "Account"
-    }
+    for account in data.ibm_enterprise_accounts.all_accounts[0].accounts :
+    "Account-${account.id}" => { id = account.id, type = "Account" }
     } : {
-    for account_id in toset(var.account_ids_to_assign) :
-    "Account-${account_id}" => {
-      id   = account_id
-      type = "Account"
-    } if account_id != "" && account_id != "all"
+    for idx, id in var.account_ids_to_assign :
+    "Account-${idx}" => { id = id, type = "Account" }
   }
 
-  # Combine all targets
   combined_targets = merge(local.group_targets, local.account_targets)
 }
 
