@@ -68,70 +68,42 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   }
 }
 
-data "ibm_enterprise_accounts" "all_accounts" {}
+# Check for "all" - only when length is exactly 1 AND value is literally "all"
+# Note: If the list contains a single computed value, length==1 is true but we can still
+# check if it's the static string "all". Computed values are never equal to "all".
+locals {
+  all_groups   = length(var.account_group_ids_to_assign) == 1 ? var.account_group_ids_to_assign[0] == "all" : false
+  all_accounts = length(var.account_ids_to_assign) == 1 ? var.account_ids_to_assign[0] == "all" : false
+}
+
+# Enterprise data sources - only needed when "all" is specified
+data "ibm_enterprise_accounts" "all_accounts" {
+  count = local.all_accounts || local.all_groups ? 1 : 0
+}
 
 data "ibm_enterprise_account_groups" "all_groups" {
-  depends_on = [data.ibm_enterprise_accounts.all_accounts]
+  count = local.all_groups ? 1 : 0
 }
 
 locals {
-  group_targets = [
-    for group in data.ibm_enterprise_account_groups.all_groups.account_groups : {
-      id   = group.id
-      type = "AccountGroup"
-    }
-  ]
-
-  compared_list = flatten(
-    [
-      for group in local.group_targets :
-      [
-        for provided_group in var.account_group_ids_to_assign :
-        provided_group if group.id == provided_group
-      ]
-    ]
-  )
-
-  all_groups = length(var.account_group_ids_to_assign) > 0 ? var.account_group_ids_to_assign[0] == "all" ? true : false : false
-  # tflint-ignore: terraform_unused_declarations
-  validate_group_ids = !local.all_groups ? length(local.compared_list) != length(var.account_group_ids_to_assign) ? tobool("Could not find all of the groups listed in the 'account_group_ids_to_assign' value. Please verify all values are correct") : true : true
-
-  combined_group_targets = local.all_groups ? {
-    for target in local.group_targets :
-    "${target.type}-${target.id}" => target
+  # Build targets using index-based keys for specific IDs (fixes for_each with computed values)
+  group_targets = local.all_groups ? {
+    for group in data.ibm_enterprise_account_groups.all_groups[0].account_groups :
+    "AccountGroup-${group.id}" => { id = group.id, type = "AccountGroup" }
     } : {
-    for target in local.group_targets :
-    "${target.type}-${target.id}" => target if contains(var.account_group_ids_to_assign, target.id)
+    for idx, id in var.account_group_ids_to_assign :
+    "AccountGroup-${idx}" => { id = id, type = "AccountGroup" }
   }
 
-  account_targets = [
-    for account in data.ibm_enterprise_accounts.all_accounts.accounts : {
-      id   = account.id
-      type = "Account"
-    }
-  ]
-
-  compared_account_list = flatten(
-    [
-      for account in local.account_targets :
-      [
-        for provided_account in var.account_ids_to_assign :
-        provided_account if account.id == provided_account
-      ]
-    ]
-  )
-  all_accounts = length(var.account_ids_to_assign) > 0 ? var.account_ids_to_assign[0] == "all" ? true : false : false
-  # tflint-ignore: terraform_unused_declarations
-  validate_account_ids = !local.all_accounts ? length(local.compared_account_list) != length(var.account_ids_to_assign) ? tobool("Could not find all of the accounts listed in the 'account_ids_to_assign' value. Please verify all values are correct") : true : true
-  combined_account_targets = local.all_accounts ? {
-    for target in local.account_targets :
-    "${target.type}-${target.id}" => target
+  account_targets = local.all_accounts ? {
+    for account in data.ibm_enterprise_accounts.all_accounts[0].accounts :
+    "Account-${account.id}" => { id = account.id, type = "Account" }
     } : {
-    for target in local.account_targets :
-    "${target.type}-${target.id}" => target if contains(var.account_ids_to_assign, target.id)
+    for idx, id in var.account_ids_to_assign :
+    "Account-${idx}" => { id = id, type = "Account" }
   }
-  combined_targets = merge(local.combined_group_targets, local.combined_account_targets)
 
+  combined_targets = merge(local.group_targets, local.account_targets)
 }
 
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
