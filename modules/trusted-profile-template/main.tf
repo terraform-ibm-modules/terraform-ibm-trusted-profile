@@ -117,4 +117,5 @@ resource "ibm_iam_trusted_profile_template_assignment" "account_settings_templat
   provisioner "local-exec" {
     command = "echo Assigned template to ${each.value.type}: ${each.value.id}"
   }
+
 }
