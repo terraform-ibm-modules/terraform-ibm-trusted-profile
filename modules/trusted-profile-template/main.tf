@@ -19,8 +19,16 @@ resource "ibm_iam_policy_template" "profile_template_policies" {
           operator = attributes.value.operator
         }
       }
+
+      dynamic "tags" {
+        for_each = each.value.resource_tags
+        content {
+          key      = tags.value.key
+          value    = tags.value.value
+          operator = tags.value.operator
+        }
+      }
     }
-    # TODO support tags (https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/issues/164)
     roles = each.value.roles
   }
   # Need to force re-create here since a template policy cannot be updated in place (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6213#issuecomment-3179425899)

@@ -15,12 +15,25 @@ variable "policy_templates" {
     name        = string
     description = string
     roles       = list(string)
+    resource_tags = optional(list(object({
+      key      = string
+      value    = string
+      operator = optional(string)
+    })), [])
     attributes = list(object({
       key      = string
       value    = string
       operator = string
     }))
   }))
+
+  validation {
+    condition = alltrue([
+      for pt in var.policy_templates :
+      alltrue([for tag in pt.resource_tags : can(regex("^[A-Za-z0-9 _\\-.:]{1,128}$", tag.value))])
+    ])
+    error_message = "Each resource tag must be 128 characters or less and may contain only A-Z, a-z, 0-9, spaces, underscore (_), hyphen (-), period (.), and colon (:)."
+  }
 }
 
 variable "account_group_ids_to_assign" {
