@@ -55,6 +55,11 @@ module "trusted_profile_template" {
           value    = module.cos.cos_instance_guid
           operator = "stringEquals"
       }]
+      resource_tags = [{
+        key      = "env"
+        value    = "dev"
+        operator = "stringEquals"
+      }]
     }
   ]
   account_ids_to_assign = []

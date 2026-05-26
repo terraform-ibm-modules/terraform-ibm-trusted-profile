@@ -30,6 +30,11 @@ module "trusted_profile_template" {
           value    = "xxxXXXxxxXXXxxxXXX"
           operator = "stringEquals"
       }]
+      resource_tags = [{
+        key      = "env"
+        value    = "production"
+        operator = "stringEquals"
+      }]
     },
     {
       name        = "platform-access"
@@ -50,10 +55,10 @@ module "trusted_profile_template" {
 You need the following permissions to run this module.
 
 - Service
-    - **Enterprise** service
-        - `Administrator` platform access
-    - **IAM Identity** service
-        - `Administrator` platform access
+  - **Enterprise** service
+    - `Administrator` platform access
+  - **IAM Identity** service
+    - `Administrator` platform access
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
@@ -85,7 +90,7 @@ No modules.
 | <a name="input_account_group_ids_to_assign"></a> [account\_group\_ids\_to\_assign](#input\_account\_group\_ids\_to\_assign) | A list of account group IDs to assign the template to. Use ['all'] to assign to all account groups (requires enterprise account). | `list(string)` | <pre>[<br/>  "all"<br/>]</pre> | no |
 | <a name="input_account_ids_to_assign"></a> [account\_ids\_to\_assign](#input\_account\_ids\_to\_assign) | A list of account IDs to assign the template to. Use ['all'] to assign to all accounts (requires enterprise account). | `list(string)` | `[]` | no |
 | <a name="input_identities"></a> [identities](#input\_identities) | List of identity blocks with type, iam\_id, and identifier | <pre>list(object({<br/>    type       = string<br/>    iam_id     = string<br/>    identifier = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_policy_templates"></a> [policy\_templates](#input\_policy\_templates) | List of IAM policy templates to create | <pre>list(object({<br/>    name        = string<br/>    description = string<br/>    roles       = list(string)<br/>    attributes = list(object({<br/>      key      = string<br/>      value    = string<br/>      operator = string<br/>    }))<br/>  }))</pre> | n/a | yes |
+| <a name="input_policy_templates"></a> [policy\_templates](#input\_policy\_templates) | List of IAM policy templates to create | <pre>list(object({<br/>    name        = string<br/>    description = string<br/>    roles       = list(string)<br/>    resource_tags = optional(list(object({<br/>      key      = string<br/>      value    = string<br/>      operator = optional(string)<br/>    })), [])<br/>    attributes = list(object({<br/>      key      = string<br/>      value    = string<br/>      operator = string<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_profile_description"></a> [profile\_description](#input\_profile\_description) | Description of the trusted profile inside the template | `string` | `null` | no |
 | <a name="input_profile_name"></a> [profile\_name](#input\_profile\_name) | Name of the trusted profile inside the template | `string` | n/a | yes |
 | <a name="input_template_description"></a> [template\_description](#input\_template\_description) | Description of the trusted profile template | `string` | `null` | no |
