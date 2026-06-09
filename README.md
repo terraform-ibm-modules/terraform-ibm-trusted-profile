@@ -16,23 +16,23 @@ This module creates a trusted profile, a set of policies given to the profile, a
 ## Overview
 <ul>
   <li><a href="#terraform-ibm-trusted-profile">terraform-ibm-trusted-profile</a></li>
-  <li><a href="./modules">Submodules</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/modules">Submodules</a>
     <ul>
-      <li><a href="./modules/trusted-profile-template">trusted-profile-template</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/modules/trusted-profile-template">trusted-profile-template</a></li>
     </ul>
   </li>
-  <li><a href="./examples">Examples</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples">Examples</a>
     <ul>
       <li>
-        <a href="./examples/basic">Basic example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/basic">Basic example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=trusted-profile-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/basic"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/complete">Complete example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/complete">Complete example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=trusted-profile-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/tp-template">Trusted Profile Template example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/tp-template">Trusted Profile Template example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=trusted-profile-tp-template-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-trusted-profile/tree/main/examples/tp-template"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
     </ul>
