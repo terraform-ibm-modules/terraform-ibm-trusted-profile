@@ -160,6 +160,9 @@ resource "ibm_iam_trusted_profile_link" "link" {
       # A link name should only be passed if 'cr_type' is 'IKS_SA' or 'ROKS_SA',
       # other wise provider fails with 'CreateLinkWithContext failed: Invalid property combination provided.'
       name = each.value.cr_type == "IKS_SA" || each.value.cr_type == "ROKS_SA" ? link.value.name : null
+      # 'component_name' and 'component_type' are only valid for Code Engine ('CE') compute resources.
+      component_name = each.value.cr_type == "CE" ? link.value.component_name : null
+      component_type = each.value.cr_type == "CE" ? link.value.component_type : null
     }
   }
 }
