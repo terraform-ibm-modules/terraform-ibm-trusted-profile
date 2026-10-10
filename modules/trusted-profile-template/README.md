@@ -64,7 +64,7 @@ You need the following permissions to run this module.
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >=1.89.0, < 3.0.0 |
 
@@ -75,7 +75,7 @@ No modules.
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ibm_iam_policy_template.profile_template_policies](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_policy_template) | resource |
 | [ibm_iam_trusted_profile_template.trusted_profile_template_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_template) | resource |
 | [ibm_iam_trusted_profile_template_assignment.account_settings_template_assignment_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_template_assignment) | resource |
@@ -86,7 +86,7 @@ No modules.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_account_group_ids_to_assign"></a> [account\_group\_ids\_to\_assign](#input\_account\_group\_ids\_to\_assign) | A list of account group IDs to assign the template to. Use ['all'] to assign to all account groups (requires enterprise account). | `list(string)` | <pre>[<br/>  "all"<br/>]</pre> | no |
 | <a name="input_account_ids_to_assign"></a> [account\_ids\_to\_assign](#input\_account\_ids\_to\_assign) | A list of account IDs to assign the template to. Use ['all'] to assign to all accounts (requires enterprise account). | `list(string)` | `[]` | no |
 | <a name="input_identities"></a> [identities](#input\_identities) | List of identity blocks with type, iam\_id, and identifier | <pre>list(object({<br/>    type       = string<br/>    iam_id     = string<br/>    identifier = string<br/>  }))</pre> | `[]` | no |
@@ -99,7 +99,7 @@ No modules.
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_enterprise_account_ids"></a> [enterprise\_account\_ids](#output\_enterprise\_account\_ids) | List of child enterprise account IDs (empty when not using 'all') |
 | <a name="output_trusted_profile_template_assignment_ids"></a> [trusted\_profile\_template\_assignment\_ids](#output\_trusted\_profile\_template\_assignment\_ids) | The map of assignment IDs for account groups and accounts |
 | <a name="output_trusted_profile_template_id"></a> [trusted\_profile\_template\_id](#output\_trusted\_profile\_template\_id) | The ID of the trusted profile template |

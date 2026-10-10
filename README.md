@@ -127,7 +127,7 @@ You will also need `Administrator` access for any service which you are creating
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >=1.89.0, < 3.0.0 |
 
@@ -138,7 +138,7 @@ No modules.
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ibm_iam_trusted_profile.profile](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile) | resource |
 | [ibm_iam_trusted_profile_claim_rule.claim_rule](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_claim_rule) | resource |
 | [ibm_iam_trusted_profile_identity.trust_identity](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_identity) | resource |
@@ -148,7 +148,7 @@ No modules.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_trusted_profile_claim_rules"></a> [trusted\_profile\_claim\_rules](#input\_trusted\_profile\_claim\_rules) | A list of Trusted Profile Claim Rule objects that are applied to the Trusted Profile created by the module. | <pre>list(object({<br/>    # required arguments<br/>    unique_identifier = string<br/>    conditions = list(object({<br/>      claim    = string<br/>      operator = string<br/>      value    = string<br/>    }))<br/><br/>    type = string<br/><br/>    # optional arguments<br/>    cr_type    = optional(string)<br/>    expiration = optional(number)<br/>    name       = optional(string)<br/>    realm_name = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_trusted_profile_description"></a> [trusted\_profile\_description](#input\_trusted\_profile\_description) | Description of the trusted profile. | `string` | `null` | no |
 | <a name="input_trusted_profile_identity"></a> [trusted\_profile\_identity](#input\_trusted\_profile\_identity) | The identity to trust (use only if needed) | <pre>object({<br/>    identifier    = string<br/>    identity_type = string<br/>    accounts      = optional(list(string))<br/>    description   = optional(string)<br/>  })</pre> | `null` | no |
@@ -159,7 +159,7 @@ No modules.
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_profile_id"></a> [profile\_id](#output\_profile\_id) | ID of the trusted profile |
 | <a name="output_trusted_profile"></a> [trusted\_profile](#output\_trusted\_profile) | Output of the Trusted Profile |
 | <a name="output_trusted_profile_claim_rules"></a> [trusted\_profile\_claim\_rules](#output\_trusted\_profile\_claim\_rules) | Output of the Trusted Profile Claim Rules |
