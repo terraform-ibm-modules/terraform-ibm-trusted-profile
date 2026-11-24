@@ -14,7 +14,25 @@ output "trusted_profile" {
 
 output "trusted_profile_policies" {
   description = "Output of the Trusted Profile Policies"
-  value       = ibm_iam_trusted_profile_policy.policy[*]
+  # Select attributes individually: referencing the whole resource object reads the deprecated `profile_id`
+  # and makes Terraform emit a 'Deprecated value used' warning.
+  value = {
+    for k, p in ibm_iam_trusted_profile_policy.policy : k => {
+      id                  = p.id
+      iam_id              = p.iam_id
+      roles               = p.roles
+      description         = p.description
+      account_management  = p.account_management
+      pattern             = p.pattern
+      rule_operator       = p.rule_operator
+      tags                = p.tags
+      transaction_id      = p.transaction_id
+      resources           = p.resources
+      resource_attributes = p.resource_attributes
+      resource_tags       = p.resource_tags
+      rule_conditions     = p.rule_conditions
+    }
+  }
 }
 
 output "trusted_profile_claim_rules" {
